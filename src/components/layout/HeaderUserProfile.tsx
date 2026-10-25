@@ -30,7 +30,7 @@ export const HeaderUserProfile = () => {
 
   const user = {
     name: identity?.name ?? "User",
-    email: identity?.email ?? "",
+    email: identity?.email || identity?.username || "",
     image: identity?.image ?? null,
   };
 

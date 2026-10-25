@@ -16,7 +16,7 @@ import {
 } from "@heroui/react";
 
 type LoginFormValues = {
-  email: string;
+  login: string;
   password: string;
 };
 
@@ -36,7 +36,7 @@ const BUBBLES = [
 
 export default function Login() {
   const [values, setValues] = useState<LoginFormValues>({
-    email: "",
+    login: "",
     password: "",
   });
 
@@ -44,7 +44,7 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { mutate: login, isPending } =
-    useLogin<Pick<LoginFormValues, "email" | "password">>();
+    useLogin<LoginFormValues>();
 
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,14 +52,14 @@ export default function Login() {
 
     login(
       {
-        email: values.email,
+        login: values.login,
         password: values.password,
       },
       {
         onError: (error) => {
           const msg =
             (error as { message?: string })?.message ||
-            "Invalid email or password.";
+            "Invalid username/email or password.";
 
           setErrorMessage(msg);
         },
@@ -139,32 +139,31 @@ export default function Login() {
           )}
 
           <Form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
-            {/* Email */}
+            {/* Username or email */}
             <TextField
               isRequired
               className="w-full"
-              name="email"
-              type="email"
-              value={values.email}
+              name="login"
+              value={values.login}
               onChange={(v) => {
                 setValues((prev) => ({
                   ...prev,
-                  email: v,
+                  login: v,
                 }));
 
                 if (errorMessage) setErrorMessage(null);
               }}
             >
-              <Label>Email</Label>
+              <Label>Username or Email</Label>
 
               <InputGroup>
                 <InputGroup.Prefix>
                   <Icon
-                    icon="solar:letter-bold"
+                    icon="solar:user-bold"
                     className="text-xl text-default-400"
                   />
                 </InputGroup.Prefix>
-                <InputGroup.Input placeholder="Enter your email" />
+                <InputGroup.Input placeholder="Enter your username or email" />
               </InputGroup>
 
               <FieldError className="text-xs" />

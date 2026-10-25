@@ -5,42 +5,59 @@ import { authStorage, type AuthUser } from "@lib/authStorage";
 /**
  * Token-based auth against the separate Dolphin API.
  *
- * API contract (to be implemented in the API project):
- *   POST /auth/login  { email, password } → { token: string, user: AuthUser }
+ * API contract:
+ *   POST /auth/login  { login, password } → { token: string, user: AuthUser }
+ *                     (login = username or email)
  *   GET  /auth/me                          → { data: AuthUser }   (Bearer token)
  * Any request returning 401 logs the user out.
+ *
+ * Accounts are shared with the POS app. Role "kasir" (cashier) may only use
+ * the POS, so it is refused here (the API also answers 403 for it).
  */
 interface LoginResponse {
   token: string;
   user: AuthUser;
 }
 
-export const authProvider: AuthProvider = {
-  login: async ({ email, password }) => {
-    try {
-      const { data } = await axiosInstance.post<LoginResponse>("/auth/login", {
-        email,
-        password,
-      });
-      authStorage.set(data.token, data.user);
+const POS_ONLY_ROLES = ["kasir"];
 
-      return {
-        success: true,
-        redirectTo: "/dashboard",
-        successNotification: {
-          message: "Welcome back to Dolphin Portal!",
-          description: "You have successfully logged in.",
-        },
-      };
+export const authProvider: AuthProvider = {
+  login: async ({ login, password }) => {
+    let data: LoginResponse;
+    try {
+      ({ data } = await axiosInstance.post<LoginResponse>("/auth/login", {
+        login,
+        password,
+      }));
     } catch {
       return {
         success: false,
         error: {
           name: "Login Failed",
-          message: "Invalid email or password. Please try again.",
+          message: "Invalid username/email or password. Please try again.",
         },
       };
     }
+
+    if (POS_ONLY_ROLES.includes(data.user.role)) {
+      return {
+        success: false,
+        error: {
+          name: "Login Failed",
+          message: "Cashier accounts can only sign in to the POS app.",
+        },
+      };
+    }
+
+    authStorage.set(data.token, data.user);
+    return {
+      success: true,
+      redirectTo: "/dashboard",
+      successNotification: {
+        message: "Welcome back to Dolphin Portal!",
+        description: "You have successfully logged in.",
+      },
+    };
   },
 
   logout: async () => {

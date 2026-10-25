@@ -220,19 +220,6 @@ export const resources = [
     },
   },
   {
-    name: "pos-employees",
-    list: "/pos/employees",
-    create: "/pos/employees/create",
-    edit: "/pos/employees/edit/:id",
-    show: "/pos/employees/show/:id",
-    meta: {
-      canDelete: true,
-      label: "Kasir",
-      parent: "pos-management",
-      icon: "mdi:account-tie",
-    },
-  },
-  {
     name: "pos-customers",
     list: "/pos/customers",
     show: "/pos/customers/show/:id",

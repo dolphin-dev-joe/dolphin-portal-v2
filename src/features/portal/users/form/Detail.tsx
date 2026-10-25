@@ -1,8 +1,10 @@
 import { AutoCompleteInput } from "@components/inputs/AutoCompleteInput";
 import SwitchInput from "@components/inputs/SwitchInput";
 import { TextInput } from "@components/inputs/TextInput";
-import React from "react";
+import { USER_ROLE_OPTIONS } from "../interfaces";
 
+// One account works for both the portal and the POS app.
+// Role "kasir" can only sign in to the POS app.
 export default function Detail() {
   return (
     <>
@@ -14,15 +16,34 @@ export default function Detail() {
         isRequired
       />
 
+      {/* Username */}
+      <TextInput
+        fieldName="username"
+        fieldLabel="Username"
+        placeholder="e.g. kasir1"
+        description="Used to sign in. A username or an email is required."
+        additionalRules={{
+          maxLength: { value: 50, message: "Max 50 characters" },
+          pattern: {
+            value: /^[^\s@]*$/,
+            message: "No spaces or @",
+          },
+          validate: (value: string, values: { email?: string }) =>
+            !!value?.trim() ||
+            !!values.email?.trim() ||
+            "Fill in a username or an email",
+        }}
+      />
+
       {/* Email */}
       <TextInput
         fieldName="email"
         fieldLabel="Email"
         placeholder="user@example.com"
-        isRequired
+        description="Optional for cashiers."
         additionalRules={{
           pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            value: /^$|^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
             message: "Invalid email address",
           },
         }}
@@ -48,11 +69,8 @@ export default function Detail() {
         fieldName="role"
         fieldLabel="Role"
         placeholder="Select user role"
-        options={[
-          { key: "user", label: "User", value: "user" },
-          { key: "admin", label: "Admin", value: "admin" },
-          { key: "super_admin", label: "Super Admin", value: "super_admin" },
-        ]}
+        description="Kasir can only sign in to the POS app."
+        options={USER_ROLE_OPTIONS.map((r) => ({ key: r.value, ...r }))}
         isRequired
       />
 

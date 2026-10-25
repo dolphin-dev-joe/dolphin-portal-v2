@@ -48,7 +48,7 @@ The API must allow CORS from the portal's origin.
 
 | Method | Path          | Body / response                                                   |
 | ------ | ------------- | ----------------------------------------------------------------- |
-| POST   | `/auth/login` | `{ email, password }` → `{ token, user: { id, name, email, role } }` |
+| POST   | `/auth/login` | `{ login, password }` (username or email) → `{ token, user: { id, name, email, username, role } }`. Role `kasir` is POS-only and refused by the portal. |
 
 **CRUD resources** — same paths as the old Next.js `/api/*` routes, without the `/api` prefix.
 Resources named `pos-*` map to `/pos/*` (`pos-services` → `/pos/services`).

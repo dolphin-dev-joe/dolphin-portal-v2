@@ -123,13 +123,6 @@ const CRUD: CrudPages[] = [
     path: "/pos/display-preview",
     list: page(() => import("@pages/pos/display-preview")),
   },
-  {
-    path: "/pos/employees",
-    list: page(() => import("@pages/pos/employees/list")),
-    create: page(() => import("@pages/pos/employees/create")),
-    edit: page(() => import("@pages/pos/employees/edit")),
-    show: page(() => import("@pages/pos/employees/show")),
-  },
   // Customers & transactions are read-only (created by the Flutter POS app).
   {
     path: "/pos/customers",
