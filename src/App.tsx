@@ -1,135 +1,59 @@
-import {
-  Refine,
-  GitHubBanner,
-  WelcomePage,
-  Authenticated,
-  AuthPage,
-  ErrorComponent,
-} from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
+import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
+import routerProvider, { UnsavedChangesNotifier } from "@refinedev/react-router";
+import { RouterProvider } from "@heroui/react";
+import { BrowserRouter, useHref, useNavigate } from "react-router";
 
-import { BrowserRouter, Route, Routes, Outlet } from "react-router";
-import routerProvider, {
-  NavigateToResource,
-  CatchAllNavigate,
-  UnsavedChangesNotifier,
-  DocumentTitleHandler,
-} from "@refinedev/react-router";
-import {
-  BlogPostList,
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryList,
-  CategoryCreate,
-  CategoryEdit,
-  CategoryShow,
-} from "./pages/categories";
-import { Layout } from "./components/layout";
-import "./App.css";
-import { dataProvider } from "./providers/data";
-import { Login } from "./pages/login";
-import { Register } from "./pages/register";
-import { ForgotPassword } from "./pages/forgotPassword";
-import { authProvider } from "./providers/auth";
+import { authProvider } from "@providers/auth-provider";
+import { dataProvider } from "@providers/data-provider";
+import { DevtoolsProvider, NotificationProvider, notificationProvider } from "@providers";
+import { resources } from "@routes/resources";
+import { AppRoutes } from "@routes/AppRoutes";
+import { DocumentTitleHandler } from "@components/document-title-handler";
+import { LookupOptionsProvider } from "@contexts/lookupOptions";
 
-function App() {
+/**
+ * Lets HeroUI / React Aria links (e.g. `<Dropdown.Item href>`) navigate
+ * client-side through React Router instead of reloading the page.
+ */
+function HeroUIRouter({ children }: React.PropsWithChildren) {
+  const navigate = useNavigate();
   return (
-    <BrowserRouter>
-      <GitHubBanner />
-      <RefineKbarProvider>
-        <DevtoolsProvider>
-          <Refine
-            dataProvider={dataProvider}
-            routerProvider={routerProvider}
-            authProvider={authProvider}
-            resources={[
-              {
-                name: "blog_posts",
-                list: "/blog-posts",
-                create: "/blog-posts/create",
-                edit: "/blog-posts/edit/:id",
-                show: "/blog-posts/show/:id",
-                meta: {
-                  canDelete: true,
-                },
-              },
-              {
-                name: "categories",
-                list: "/categories",
-                create: "/categories/create",
-                edit: "/categories/edit/:id",
-                show: "/categories/show/:id",
-                meta: {
-                  canDelete: true,
-                },
-              },
-            ]}
-            options={{
-              syncWithLocation: true,
-              warnWhenUnsavedChanges: true,
-              projectId: "uSCaaK-RG5u1x-E6CnXU",
-            }}
-          >
-            <Routes>
-              <Route
-                element={
-                  <Authenticated
-                    key="authenticated-inner"
-                    fallback={<CatchAllNavigate to="/login" />}
-                  >
-                    <Layout>
-                      <Outlet />
-                    </Layout>
-                  </Authenticated>
-                }
-              >
-                <Route
-                  index
-                  element={<NavigateToResource resource="blog_posts" />}
-                />
-                <Route path="/blog-posts">
-                  <Route index element={<BlogPostList />} />
-                  <Route path="create" element={<BlogPostCreate />} />
-                  <Route path="edit/:id" element={<BlogPostEdit />} />
-                  <Route path="show/:id" element={<BlogPostShow />} />
-                </Route>
-                <Route path="/categories">
-                  <Route index element={<CategoryList />} />
-                  <Route path="create" element={<CategoryCreate />} />
-                  <Route path="edit/:id" element={<CategoryEdit />} />
-                  <Route path="show/:id" element={<CategoryShow />} />
-                </Route>
-                <Route path="*" element={<ErrorComponent />} />
-              </Route>
-              <Route
-                element={
-                  <Authenticated
-                    key="authenticated-outer"
-                    fallback={<Outlet />}
-                  >
-                    <NavigateToResource />
-                  </Authenticated>
-                }
-              >
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-              </Route>
-            </Routes>
-
-            <RefineKbar />
-            <UnsavedChangesNotifier />
-            <DocumentTitleHandler />
-          </Refine>
-          <DevtoolsPanel />
-        </DevtoolsProvider>
-      </RefineKbarProvider>
-    </BrowserRouter>
+    <RouterProvider navigate={navigate} useHref={useHref}>
+      {children}
+    </RouterProvider>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <HeroUIRouter>
+        <NotificationProvider />
+        <RefineKbarProvider>
+          <DevtoolsProvider>
+            <Refine
+              routerProvider={routerProvider}
+              dataProvider={dataProvider}
+              notificationProvider={notificationProvider}
+              authProvider={authProvider}
+              resources={resources}
+              options={{
+                syncWithLocation: true,
+                warnWhenUnsavedChanges: true,
+                projectId: "uSCaaK-RG5u1x-E6CnXU",
+              }}
+            >
+              <LookupOptionsProvider>
+                <AppRoutes />
+                <RefineKbar />
+                <UnsavedChangesNotifier />
+                <DocumentTitleHandler />
+              </LookupOptionsProvider>
+            </Refine>
+          </DevtoolsProvider>
+        </RefineKbarProvider>
+      </HeroUIRouter>
+    </BrowserRouter>
+  );
+}

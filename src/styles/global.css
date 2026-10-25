@@ -1,0 +1,391 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+
+
+
+/*
+ * HeroUI Theme Customization
+ * Add this to your global.css after importing @heroui/styles
+ * Only includes base variables from variables.css
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+:root {
+    /* Possible values: shimmer, pulse, none */
+    --skeleton-animation: pulse;
+
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Login page decorative animations (water / laundry-bubble theme)
+ * ────────────────────────────────────────────────────────────────────────── */
+@keyframes login-blob {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(28px, -38px) scale(1.08);
+    }
+    66% {
+        transform: translate(-22px, 18px) scale(0.95);
+    }
+}
+
+@keyframes login-bubble {
+    0% {
+        transform: translateY(0) scale(0.9);
+        opacity: 0;
+    }
+    12% {
+        opacity: 0.65;
+    }
+    85% {
+        opacity: 0.35;
+    }
+    100% {
+        transform: translateY(-115vh) scale(1.15);
+        opacity: 0;
+    }
+}
+
+.animate-login-blob {
+    animation: login-blob 16s ease-in-out infinite;
+}
+
+.animate-login-bubble {
+    animation: login-bubble 14s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-login-blob,
+    .animate-login-bubble {
+        animation: none;
+    }
+}
+
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+    /* Theme Colors (Light Mode) */
+    --accent: oklch(61.90% 0.1683 252.66);
+    --accent-foreground: oklch(99.11% 0 0);
+    --background: oklch(97.02% 0.0200 252.66);
+    --border: oklch(90.00% 0.0200 252.66);
+    --danger: oklch(65.32% 0.2421 25.60);
+    --danger-foreground: oklch(99.11% 0 0);
+    --default: oklch(94.00% 0.0200 252.66);
+    --default-foreground: oklch(21.03% 0.0059 252.66);
+    --field-background: oklch(100.00% 0.0100 252.66);
+    --field-foreground: oklch(21.03% 0.0200 252.66);
+    --field-placeholder: oklch(55.17% 0.0400 252.66);
+    --focus: oklch(61.90% 0.1683 252.66);
+    --foreground: oklch(21.03% 0.0200 252.66);
+    --muted: oklch(55.17% 0.0400 252.66);
+    --overlay: oklch(100.00% 0.0060 252.66);
+    --overlay-foreground: oklch(21.03% 0.0200 252.66);
+    --scrollbar: oklch(87.10% 0.0200 252.66);
+    --segment: oklch(100.00% 0.0200 252.66);
+    --segment-foreground: oklch(21.03% 0.0200 252.66);
+    --separator: oklch(92.00% 0.0200 252.66);
+    --success: oklch(73.29% 0.2012 150.67);
+    --success-foreground: oklch(21.03% 0.0059 150.67);
+    --surface: oklch(100.00% 0.0100 252.66);
+    --surface-foreground: oklch(21.03% 0.0200 252.66);
+    --surface-secondary: oklch(95.24% 0.0160 252.66);
+    --surface-secondary-foreground: oklch(21.03% 0.0200 252.66);
+    --surface-tertiary: oklch(93.73% 0.0160 252.66);
+    --surface-tertiary-foreground: oklch(21.03% 0.0200 252.66);
+    --warning: oklch(78.19% 0.1648 72.19);
+    --warning-foreground: oklch(21.03% 0.0059 72.19);
+
+    /* Border Radius */
+    --radius: 0.5rem;
+    --field-radius: 0.75rem;
+
+    /* Font Family */
+    /* Inter is loaded from Google Fonts in index.html */
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark,
+[data-theme="dark"] {
+    color-scheme: dark;
+    /* Theme Colors (Dark Mode) */
+    --accent: oklch(61.90% 0.1683 252.66);
+    --accent-foreground: oklch(99.11% 0 0);
+    --background: oklch(12.00% 0.0200 252.66);
+    --border: oklch(28.00% 0.0200 252.66);
+    --danger: oklch(59.40% 0.2046 24.49);
+    --danger-foreground: oklch(99.11% 0 0);
+    --default: oklch(27.40% 0.0200 252.66);
+    --default-foreground: oklch(99.11% 0 0);
+    --field-background: oklch(21.03% 0.0400 252.66);
+    --field-foreground: oklch(99.11% 0.0200 252.66);
+    --field-placeholder: oklch(70.50% 0.0400 252.66);
+    --focus: oklch(61.90% 0.1683 252.66);
+    --foreground: oklch(99.11% 0.0200 252.66);
+    --muted: oklch(70.50% 0.0400 252.66);
+    --overlay: oklch(21.03% 0.0400 252.66);
+    --overlay-foreground: oklch(99.11% 0.0200 252.66);
+    --scrollbar: oklch(70.50% 0.0200 252.66);
+    --segment: oklch(39.64% 0.0200 252.66);
+    --segment-foreground: oklch(99.11% 0.0200 252.66);
+    --separator: oklch(25.00% 0.0200 252.66);
+    --success: oklch(73.29% 0.2012 150.67);
+    --success-foreground: oklch(21.03% 0.0059 150.67);
+    --surface: oklch(21.03% 0.0400 252.66);
+    --surface-foreground: oklch(99.11% 0.0200 252.66);
+    --surface-secondary: oklch(25.70% 0.0300 252.66);
+    --surface-secondary-foreground: oklch(99.11% 0.0200 252.66);
+    --surface-tertiary: oklch(27.21% 0.0300 252.66);
+    --surface-tertiary-foreground: oklch(99.11% 0.0200 252.66);
+    --warning: oklch(82.03% 0.1444 76.20);
+    --warning-foreground: oklch(21.03% 0.0059 76.20);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * GLASSMORPHISM THEME (blue tint preserved)
+ *
+ * Frosted-glass surfaces applied globally to HeroUI v3 components by:
+ *   1. Making surface/overlay/field tokens translucent (auto-applies to
+ *      cards, popovers, dropdowns, selects, modals, drawers, tooltips, inputs,
+ *      sidebar — anything using bg-surface / bg-overlay / field-background).
+ *   2. Adding backdrop-blur + glass border + inner glow + soft shadow to the
+ *      container classes. These rules are intentionally UNLAYERED and placed
+ *      after `@import "@heroui/styles"`, so they win the cascade over HeroUI's
+ *      layered component styles.
+ *
+ * Tune the look via the --glass-* variables below.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+    --glass-blur: 15px;
+    --glass-saturate: 160%;
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-glow: inset 0 1px 1px rgba(255, 255, 255, 0.45);
+    --glass-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+}
+
+.dark,
+[data-theme="dark"] {
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-glow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Translucent surface/overlay tokens — light */
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+    --surface: oklch(100% 0.01 252.66 / 0.62);
+    --surface-secondary: oklch(95.24% 0.016 252.66 / 0.55);
+    --surface-tertiary: oklch(93.73% 0.016 252.66 / 0.5);
+    --overlay: oklch(100% 0.006 252.66 / 0.72);
+    --field-background: oklch(100% 0.01 252.66 / 0.55);
+}
+
+/* Translucent surface/overlay tokens — dark */
+.dark,
+[data-theme="dark"] {
+    --surface: oklch(21.03% 0.04 252.66 / 0.55);
+    --surface-secondary: oklch(25.7% 0.03 252.66 / 0.5);
+    --surface-tertiary: oklch(27.21% 0.03 252.66 / 0.5);
+    --overlay: oklch(21.03% 0.04 252.66 / 0.62);
+    --field-background: oklch(21.03% 0.04 252.66 / 0.5);
+}
+
+/* Frosted glass on all surface-bearing HeroUI containers.
+   `.card--transparent` is excluded so genuinely transparent cards stay flat. */
+.card:not(.card--transparent),
+.popover,
+.tooltip,
+.modal__dialog,
+.drawer__dialog {
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-glow), var(--glass-shadow);
+}
+
+/* Lighter frost on form fields so text stays crisp & legible. */
+.input,
+.input-group,
+.select__trigger,
+.textarea {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* Reusable opt-in glass for custom (non-HeroUI) elements, e.g. sidebar,
+   dashboard panels: add `className="glass-panel"`. */
+.glass-panel {
+    background-color: oklch(100% 0.01 252.66 / 0.6);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-glow), var(--glass-shadow);
+    border-radius: min(32px, var(--radius-3xl));
+}
+
+.dark .glass-panel,
+[data-theme="dark"] .glass-panel {
+    background-color: oklch(21.03% 0.04 252.66 / 0.55);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .card:not(.card--transparent),
+    .popover,
+    .tooltip,
+    .modal__dialog,
+    .drawer__dialog,
+    .glass-panel {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Rich Content (article HTML) typography
+ *
+ * Applied to the text editor's contentEditable area (`.rich-content`) and to
+ * the article show page / preview via `dangerouslySetInnerHTML`.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.rich-content {
+    line-height: 1.75;
+    font-size: 1rem;
+    color: var(--foreground);
+}
+
+.rich-content > *:first-child {
+    margin-top: 0;
+}
+
+.rich-content > *:last-child {
+    margin-bottom: 0;
+}
+
+.rich-content h1,
+.rich-content h2,
+.rich-content h3,
+.rich-content h4,
+.rich-content h5,
+.rich-content h6 {
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 1.5em 0 0.6em;
+    color: var(--foreground);
+}
+
+.rich-content h1 { font-size: 2rem; }
+.rich-content h2 { font-size: 1.5rem; }
+.rich-content h3 { font-size: 1.25rem; }
+.rich-content h4 { font-size: 1.125rem; }
+.rich-content h5 { font-size: 1rem; }
+.rich-content h6 { font-size: 0.875rem; }
+
+.rich-content p {
+    margin: 0.75em 0;
+}
+
+.rich-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.rich-content ul,
+.rich-content ol {
+    margin: 0.75em 0;
+    padding-left: 1.5em;
+}
+
+.rich-content ul { list-style: disc; }
+.rich-content ol { list-style: decimal; }
+
+.rich-content blockquote {
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border-left: 3px solid var(--accent);
+    background: var(--surface-secondary);
+    color: var(--muted-foreground, var(--foreground));
+    font-style: italic;
+}
+
+.rich-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    display: block;
+    margin: 1em auto;
+}
+
+.rich-content pre {
+    position: relative;
+    background: var(--default);
+    color: var(--default-foreground);
+    padding: 1em 1em 1em 3.25em;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 1em 0;
+}
+
+.rich-content pre code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: transparent;
+    padding: 0;
+}
+
+.rich-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--surface-secondary);
+    padding: 0.15em 0.35em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+}
+
+.rich-content .code-lang-label {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.5rem;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground, var(--default-foreground));
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.rich-content .code-line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2.5em;
+    padding: 1em 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+    background: var(--surface-tertiary);
+    border-right: 1px solid var(--divider, var(--border));
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+}
+
+.rich-content .code-line-numbers span {
+    display: block;
+    padding: 0 0.625em;
+    line-height: 1.6;
+    font-size: 0.875rem;
+    color: var(--muted-foreground, var(--default-foreground));
+    opacity: 0.6;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

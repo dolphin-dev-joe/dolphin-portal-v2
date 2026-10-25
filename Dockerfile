@@ -1,37 +1,23 @@
-# This Dockerfile uses `serve` npm package to serve the static files with node process.
-# You can find the Dockerfile for nginx in the following link:
-# https://github.com/refinedev/dockerfiles/blob/main/vite/Dockerfile.nginx
-FROM refinedev/node:18 AS base
+# Builds the static SPA and serves it with `serve`.
+# VITE_API_URL is baked in at build time: docker build --build-arg VITE_API_URL=https://api.example.com/api .
+FROM node:22-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci
 
-FROM base as deps
-
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
-
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
-
-FROM base as builder
-
-ENV NODE_ENV production
-
-COPY --from=deps /app/refine/node_modules ./node_modules
-
+FROM node:22-alpine AS builder
+WORKDIR /app
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
 RUN npm run build
 
-FROM base as runner
-
-ENV NODE_ENV production
-
+FROM node:22-alpine AS runner
+WORKDIR /app
 RUN npm install -g serve
-
-COPY --from=builder /app/refine/dist ./
-
-USER refine
-
-CMD ["serve"]
+COPY --from=builder /app/dist ./dist
+USER node
+EXPOSE 3000
+# -s: single-page app mode, so deep links like /pos/services fall back to index.html
+CMD ["serve", "-s", "dist", "-l", "3000"]
