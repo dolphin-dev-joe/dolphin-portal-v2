@@ -142,6 +142,13 @@ const CRUD: CrudPages[] = [
     path: "/pos/unpaid-transactions",
     list: page(() => import("@pages/pos/unpaid-transactions/list")),
   },
+  // POS tablet builds: upload here, the tablets update themselves.
+  {
+    path: "/pos/app-releases",
+    list: page(() => import("@pages/pos/app-releases/list")),
+    create: page(() => import("@pages/pos/app-releases/create")),
+    show: page(() => import("@pages/pos/app-releases/show")),
+  },
 ];
 
 function ProtectedLayout() {

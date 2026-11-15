@@ -267,6 +267,17 @@ export const resources = [
       icon: "mdi:receipt-text-remove-outline",
     },
   },
+  {
+    name: "pos-app-releases",
+    list: "/pos/app-releases",
+    create: "/pos/app-releases/create",
+    show: "/pos/app-releases/show/:id",
+    meta: {
+      label: "Rilis Aplikasi",
+      parent: "pos-management",
+      icon: "mdi:cellphone-arrow-down",
+    },
+  },
 
   // ── Hidden / standalone ────────────────────────────────────────────────────
   {
