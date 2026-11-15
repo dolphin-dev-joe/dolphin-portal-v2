@@ -18,7 +18,7 @@ import {
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
-import { StatusChip } from "@features/pos/transactions/StatusChip";
+import { PaymentStatusChip, StatusChip } from "@features/pos/transactions/StatusChip";
 import { InfoField } from "@features/pos/transactions/InfoField";
 import {
   STATUS_CONFIG,
@@ -43,6 +43,33 @@ export default function PosTransactionShowPage() {
 
   const { mutate: updateStatus, mutation } = useCustomMutation();
   const isUpdating = mutation.isPending;
+
+  const { mutate: recordPayment, mutation: paymentMutation } = useCustomMutation();
+  const isPaying = paymentMutation.isPending;
+
+  // Customer paid after drop-off (e.g. transferred before pickup).
+  const handleRecordPayment = (paymentMethod: string) => {
+    if (!id || isPaying) return;
+    recordPayment(
+      {
+        url: `pos/transactions/${id}/payment`,
+        method: "patch",
+        values: { paymentMethod },
+        successNotification: () => ({
+          message: "Pembayaran dicatat",
+          type: "success",
+        }),
+      },
+      {
+        onSuccess: () =>
+          invalidate({
+            resource: "pos-transactions",
+            id,
+            invalidates: ["detail", "list"],
+          }),
+      },
+    );
+  };
 
   const handleStatusUpdate = (newStatus: string) => {
     if (!id || isUpdating) return;
@@ -98,11 +125,14 @@ export default function PosTransactionShowPage() {
       ? WORKFLOW[currentStep + 1]
       : null;
   const showWorkflow = tx.status !== "cancelled" && tx.status !== "completed";
+  const isUnpaid = tx.paymentStatus === "unpaid";
+  // Laundry is never handed over before it is paid (the API enforces it too).
+  const blockedByPayment = nextStatus === "picked_up" && isUnpaid;
   const items = tx.items ?? [];
 
   return (
     <div className="max-w-full mx-auto  space-y-6">
-      <LoadingScreen isLoading={query.isLoading || mutation.isPending} />
+      <LoadingScreen isLoading={query.isLoading || mutation.isPending || isPaying} />
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
@@ -194,7 +224,7 @@ export default function PosTransactionShowPage() {
                   <Button
                     onPress={() => handleStatusUpdate(nextStatus)}
                     isPending={isUpdating}
-                    isDisabled={isUpdating}
+                    isDisabled={isUpdating || blockedByPayment}
                   >
                     {isUpdating ? (
                       <Spinner color="current" size="sm" />
@@ -213,6 +243,11 @@ export default function PosTransactionShowPage() {
                   Batalkan Transaksi
                 </Button>
               </div>
+            )}
+            {blockedByPayment && (
+              <Typography type="body-xs" className="text-warning mt-2">
+                Transaksi belum dibayar. Catat pembayaran di bawah sebelum laundry diambil.
+              </Typography>
             )}
           </Card.Content>
         </Card>
@@ -370,14 +405,51 @@ export default function PosTransactionShowPage() {
           </div>
           <div className="flex justify-between items-center pt-1">
             <Typography type="body-sm" color="muted">
-              Metode Pembayaran
+              Status Pembayaran
             </Typography>
-            <Chip variant="soft" color="accent">
-              <Chip.Label>
-                {PAYMENT_LABELS[tx.paymentMethod] ?? tx.paymentMethod}
-              </Chip.Label>
-            </Chip>
+            <PaymentStatusChip status={tx.paymentStatus} />
           </div>
+          {tx.paymentMethod && (
+            <div className="flex justify-between items-center pt-1">
+              <Typography type="body-sm" color="muted">
+                Metode Pembayaran
+              </Typography>
+              <Chip variant="soft" color="accent">
+                <Chip.Label>
+                  {PAYMENT_LABELS[tx.paymentMethod] ?? tx.paymentMethod}
+                </Chip.Label>
+              </Chip>
+            </div>
+          )}
+          {tx.paidAt && (
+            <div className="flex justify-between items-center pt-1">
+              <Typography type="body-sm" color="muted">
+                Dibayar Pada
+              </Typography>
+              <Typography type="body-sm">{formatDateTimeShort(tx.paidAt)}</Typography>
+            </div>
+          )}
+          {isUnpaid && tx.status !== "cancelled" && (
+            <div className="pt-3 space-y-2">
+              <Typography type="body-xs" color="muted">
+                Pelanggan bayar saat ambil. Kalau sudah dibayar (mis. transfer / QRIS sudah masuk), catat di sini:
+              </Typography>
+              <div className="flex gap-2 flex-wrap">
+                {Object.entries(PAYMENT_LABELS).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    variant="secondary"
+                    size="sm"
+                    onPress={() => handleRecordPayment(value)}
+                    isDisabled={isPaying}
+                  >
+                    <Icon icon="mdi:cash-check" width={16} />
+                    Lunas via {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </Card.Content>
       </Card>
     </div>

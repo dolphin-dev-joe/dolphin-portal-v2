@@ -9,7 +9,8 @@ interface RecentTransaction {
   invoiceNumber: string;
   customerName: string;
   total: string;
-  paymentMethod: string;
+  paymentMethod: string | null;
+  paymentStatus: "paid" | "unpaid";
   status: string;
   createdAt: Date;
 }
@@ -17,6 +18,8 @@ interface RecentTransaction {
 export interface PosStats {
   todayTransactions: number;
   todayRevenue: number;
+  unpaidCount: number;
+  unpaidTotal: number;
   totalCustomers: number;
   activeServices: number;
   recentTransactions: RecentTransaction[];
@@ -58,7 +61,7 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           title="Transaksi Hari Ini"
           value={String(stats.todayTransactions)}
@@ -75,6 +78,15 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
           bgColor="bg-green-100 dark:bg-green-400/10"
           textColor="text-green-600 dark:text-green-400"
           delay={0.2}
+        />
+        <StatCard
+          title={`Belum Dibayar (${stats.unpaidCount} order)`}
+          value={formatIDR(stats.unpaidTotal)}
+          icon={<Icon icon="mdi:cash-clock" width={24} />}
+          bgColor="bg-orange-100 dark:bg-orange-400/10"
+          textColor="text-orange-600 dark:text-orange-400"
+          delay={0.25}
+          href="/pos/unpaid-transactions"
         />
         <StatCard
           title="Total Pelanggan"
@@ -134,13 +146,19 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
                       <td className="p-3">{tx.customerName}</td>
                       <td className="p-3 text-right font-medium">{formatIDR(tx.total)}</td>
                       <td className="p-3">
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            PAYMENT_COLORS[tx.paymentMethod] ?? "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {PAYMENT_LABELS[tx.paymentMethod] ?? tx.paymentMethod}
-                        </span>
+                        {tx.paymentStatus === "unpaid" || !tx.paymentMethod ? (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                            Belum Bayar
+                          </span>
+                        ) : (
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              PAYMENT_COLORS[tx.paymentMethod] ?? "bg-gray-100 text-gray-700"
+                            }`}
+                          >
+                            {PAYMENT_LABELS[tx.paymentMethod] ?? tx.paymentMethod}
+                          </span>
+                        )}
                       </td>
                       <td className="p-3 text-gray-500 text-xs">
                         {formatDateShort(tx.createdAt)}

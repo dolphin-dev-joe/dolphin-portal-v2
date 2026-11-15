@@ -18,7 +18,9 @@ export interface IPosTransaction {
   cashierName: string;
   perfumeId?: string | null;
   perfumeName?: string | null;
-  paymentMethod: string;
+  paymentMethod: string | null; // null while unpaid
+  paymentStatus: "paid" | "unpaid";
+  paidAt?: string | null;
   estimatedCompletionAt?: string | null;
   subtotal: string;
   total: string;

@@ -9,6 +9,8 @@ import ContentDashboard, { type ContentStats } from "./ContentDashboard";
 const EMPTY_POS: PosStats = {
   todayTransactions: 0,
   todayRevenue: 0,
+  unpaidCount: 0,
+  unpaidTotal: 0,
   totalCustomers: 0,
   activeServices: 0,
   recentTransactions: [],

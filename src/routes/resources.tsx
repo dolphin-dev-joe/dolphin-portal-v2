@@ -248,6 +248,16 @@ export const resources = [
     },
   },
   {
+    name: "pos-unpaid-transactions",
+    list: "/pos/unpaid-transactions",
+    show: "/pos/transactions/show/:id",
+    meta: {
+      label: "Belum Dibayar",
+      parent: "pos-transactions-group",
+      icon: "mdi:cash-clock",
+    },
+  },
+  {
     name: "pos-cancelled-transactions",
     list: "/pos/cancelled-transactions",
     show: "/pos/transactions/show/:id",

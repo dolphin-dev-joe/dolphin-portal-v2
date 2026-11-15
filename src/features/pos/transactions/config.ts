@@ -13,6 +13,12 @@ export const PAYMENT_LABELS: Record<string, string> = {
   qris: "QRIS",
 };
 
+// Customers pay at drop-off or at pickup, so a transaction can be unpaid.
+export const PAYMENT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  paid:   { label: "Lunas",       color: "success", icon: "mdi:check-decagram" },
+  unpaid: { label: "Belum Bayar", color: "warning", icon: "mdi:cash-clock" },
+};
+
 export interface StatusConfig {
   label: string;
   color: StatusChipColor;

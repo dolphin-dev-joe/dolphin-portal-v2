@@ -19,6 +19,17 @@ const statusFilters: CustomFilter<IPosTransaction>[] = [
       { label: "Dibatalkan", value: "cancelled" },
     ],
   },
+  {
+    key: "paymentStatus",
+    label: "Pembayaran",
+    placeholder: "Status Bayar",
+    type: "single",
+    options: [
+      { label: "Semua", value: "all" },
+      { label: "Lunas", value: "paid" },
+      { label: "Belum Bayar", value: "unpaid" },
+    ],
+  },
 ];
 
 export default function PosTransactionsListPage() {
@@ -26,7 +37,7 @@ export default function PosTransactionsListPage() {
     <DataTable<IPosTransaction>
       resource="pos-transactions"
       label="Transaksi POS"
-      description="Riwayat transaksi kasir Dolphin POS (read-only)."
+      description="Riwayat transaksi kasir Dolphin POS."
       columns={columnsPosTransaction}
       withSearch
       customFilters={statusFilters}

@@ -138,6 +138,10 @@ const CRUD: CrudPages[] = [
     path: "/pos/cancelled-transactions",
     list: page(() => import("@pages/pos/cancelled-transactions/list")),
   },
+  {
+    path: "/pos/unpaid-transactions",
+    list: page(() => import("@pages/pos/unpaid-transactions/list")),
+  },
 ];
 
 function ProtectedLayout() {
