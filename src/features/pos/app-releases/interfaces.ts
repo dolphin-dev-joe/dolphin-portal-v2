@@ -13,3 +13,9 @@ export interface IAppRelease {
   uploadedBy: string;
   createdAt: string;
 }
+
+/** Step 1 of an upload: where the browser PUTs the APK (Supabase signed URL). */
+export interface IUploadTarget {
+  uploadUrl: string;
+  path: string;
+}

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import axios, { type AxiosError } from "axios";
 import { useInvalidate, useNavigation, useNotification, type HttpError } from "@refinedev/core";
 import {
   Button,
@@ -14,10 +15,26 @@ import {
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { axiosInstance } from "@providers/axios";
-import { IAppRelease } from "@features/pos/app-releases/interfaces";
+import { IAppRelease, IUploadTarget } from "@features/pos/app-releases/interfaces";
 import { formatMegabytes } from "@features/pos/app-releases/format";
 
 const MAX_CHANGELOG = 2000;
+const APK_CONTENT_TYPE = "application/vnd.android.package-archive";
+
+/** Error body of Supabase Storage (statusCode is a string, e.g. "413"). */
+interface StorageError {
+  statusCode?: string;
+  message?: string;
+}
+
+function storageErrorMessage(e: AxiosError<StorageError>): string {
+  const code = e.response?.data?.statusCode ?? String(e.response?.status ?? "");
+  if (code === "413") {
+    return "APK terlalu besar untuk Supabase Storage (free plan maks. 50 MB per file).";
+  }
+  if (!e.response) return "Koneksi terputus saat mengunggah APK. Coba lagi.";
+  return `Upload ke storage gagal: ${e.response.data?.message ?? e.message}`;
+}
 
 // Upload a signed release APK. The API reads the version from the APK
 // itself, refuses anything that is not the POS app or not newer than the
@@ -51,17 +68,28 @@ export default function PosAppReleaseCreatePage() {
     setError(null);
     setProgress(0);
 
-    const form = new FormData();
-    form.append("changelog", changelog.trim());
-    form.append("isMandatory", String(isMandatory));
-    form.append("file", file);
-
     try {
-      const { data } = await axiosInstance.post<{ data: IAppRelease }>("/pos/app-releases", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 10 * 60 * 1000,
-        onUploadProgress: (e) => setProgress(e.total ? Math.round((e.loaded / e.total) * 100) : 0),
-      });
+      // The API host (Vercel) rejects bodies over 4.5 MB, so the APK goes
+      // straight to storage through a signed URL, then the API checks it.
+      const { data: target } = await axiosInstance.post<{ data: IUploadTarget }>(
+        "/pos/app-releases/upload-url",
+      );
+      try {
+        // Plain axios: the signed URL is the credential, our bearer token must not be sent.
+        await axios.put(target.data.uploadUrl, file, {
+          headers: { "Content-Type": APK_CONTENT_TYPE },
+          timeout: 10 * 60 * 1000,
+          onUploadProgress: (e) => setProgress(e.total ? Math.round((e.loaded / e.total) * 100) : 0),
+        });
+      } catch (e) {
+        throw { message: storageErrorMessage(e as AxiosError<StorageError>) } satisfies Partial<HttpError>;
+      }
+
+      const { data } = await axiosInstance.post<{ data: IAppRelease }>(
+        "/pos/app-releases",
+        { path: target.data.path, changelog: changelog.trim(), isMandatory },
+        { timeout: 5 * 60 * 1000 },
+      );
       open?.({
         type: "success",
         message: `Versi ${data.data.versionName} dipublikasikan`,
