@@ -20,6 +20,7 @@ import { Icon } from "@iconify/react";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
 import { PaymentStatusChip, StatusChip } from "@features/pos/transactions/StatusChip";
 import { InfoField } from "@features/pos/transactions/InfoField";
+import { PaymentProof } from "@features/pos/transactions/PaymentProof";
 import {
   STATUS_CONFIG,
   WORKFLOW,
@@ -429,6 +430,7 @@ export default function PosTransactionShowPage() {
               <Typography type="body-sm">{formatDateTimeShort(tx.paidAt)}</Typography>
             </div>
           )}
+          <PaymentProof tx={tx} />
           {isUnpaid && tx.status !== "cancelled" && (
             <div className="pt-3 space-y-2">
               <Typography type="body-xs" color="muted">

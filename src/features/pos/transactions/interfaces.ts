@@ -26,5 +26,13 @@ export interface IPosTransaction {
   total: string;
   status: string;
   createdAt: string;
+  // QRIS / transfer proof photo in the private bucket; null until synced.
+  paymentProofPath?: string | null;
   items?: IPosTransactionItem[];
+}
+
+// Short-lived signed link to a proof photo.
+export interface IPaymentProofLink {
+  url: string;
+  expiresAt: string;
 }
