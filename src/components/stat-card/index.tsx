@@ -1,7 +1,6 @@
-import { Card, Link, Separator } from "@heroui/react";
+import { Card, Link } from "@heroui/react";
 import { Heading } from "@/components/heading";
 import { Text } from "@/components/text";
-// import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 
@@ -10,7 +9,9 @@ interface StatCardProps {
   value: string;
   change?: string;
   icon: ReactNode;
+  /** Soft tint for the icon tile and the corner glow, e.g. `bg-blue-100 dark:bg-blue-400/10`. */
   bgColor: string;
+  /** Matching strong color for the icon and the link, e.g. `text-blue-600 dark:text-blue-400`. */
   textColor: string;
   delay?: number;
   href?: string;
@@ -28,15 +29,20 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <Card
-      className="stat-card-enter"
-      variant="secondary"
+      className="stat-card-enter relative overflow-hidden"
       style={{ animationDelay: `${delay}s` }}
     >
-      <Card.Content className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className={`p-3 rounded-xl ${bgColor} ${textColor}`}>{icon}</div>
+      {/* Corner glow in the card's own color, so each card has its own tint instead of gray */}
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute -end-10 -top-10 size-36 rounded-full opacity-70 blur-2xl ${bgColor}`}
+      />
+
+      <Card.Content className="relative p-6">
+        <div className="mb-4 flex items-start justify-between">
+          <div className={`rounded-xl p-3 ${bgColor} ${textColor}`}>{icon}</div>
           {change && (
-            <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-400/10 px-2 py-1 rounded-lg">
+            <span className="rounded-lg bg-success/10 px-2 py-1 text-xs font-medium text-success">
               {change}
             </span>
           )}
@@ -44,32 +50,21 @@ export default function StatCard({
         <Text size="lg" color="muted" weight="medium" className="mb-1">
           {title}
         </Text>
-        <Heading
-          as="h3"
-          size="3xl"
-          weight="bold"
-          className="text-gray-900 dark:text-white"
-        >
+        <Heading as="h3" size="3xl" weight="bold" className="text-foreground">
           {value}
         </Heading>
 
         {href && (
-          <>
-            <Separator variant="default" className="my-4" />
-            {/* <div className="my-4 border-t border-gray-100 dark:border-gray-800" /> */}
-            <div className="ms-auto">
-              <Link
-                href={href}
-                className="flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors group"
-              >
-                View details
-                <Icon
-                  icon="heroicons:arrow-right"
-                  className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                />
-              </Link>
-            </div>
-          </>
+          <Link
+            href={href}
+            className={`group mt-4 flex w-fit items-center gap-1.5 text-sm font-medium no-underline transition-opacity hover:opacity-80 ${textColor}`}
+          >
+            Lihat detail
+            <Icon
+              icon="heroicons:arrow-right"
+              className="size-3.5 transition-transform group-hover:translate-x-0.5"
+            />
+          </Link>
         )}
       </Card.Content>
     </Card>

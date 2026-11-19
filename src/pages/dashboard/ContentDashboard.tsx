@@ -75,8 +75,8 @@ export default function ContentDashboard({ stats }: { stats: ContentStats }) {
           title="Draft Artikel"
           value={String(stats.draftArticles)}
           icon={<Icon icon="mdi:file-document-edit-outline" width={24} />}
-          bgColor="bg-slate-100 dark:bg-slate-400/10"
-          textColor="text-slate-600 dark:text-slate-400"
+          bgColor="bg-cyan-100 dark:bg-cyan-400/10"
+          textColor="text-cyan-600 dark:text-cyan-400"
           delay={0.6}
           href="/articles"
         />
