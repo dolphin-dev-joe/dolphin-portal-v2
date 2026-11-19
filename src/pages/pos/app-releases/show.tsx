@@ -15,7 +15,8 @@ import {
 import { Icon } from "@iconify/react";
 import { IAppRelease } from "@features/pos/app-releases/interfaces";
 import { ReleaseStatusChips } from "@features/pos/app-releases/ReleaseStatusChips";
-import { formatMegabytes } from "@features/pos/app-releases/format";
+import { formatMegabytes, shareableDownloadUrl } from "@features/pos/app-releases/format";
+import { useCopyToClipboard } from "@hooks/useCopyToClipboard";
 import { InfoField } from "@features/pos/transactions/InfoField";
 import { formatDateTimeShort } from "@utils/date";
 
@@ -24,6 +25,7 @@ export default function PosAppReleaseShowPage() {
   const { result: release, query } = useOne<IAppRelease>({ resource: "pos-app-releases", id });
   const { mutate: update, mutation } = useUpdate<IAppRelease>();
   const [changelog, setChangelog] = useState<string | null>(null);
+  const copy = useCopyToClipboard();
 
   const patch = (values: Partial<Pick<IAppRelease, "changelog" | "isMandatory" | "isPublished">>, message: string) => {
     if (!id) return;
@@ -59,6 +61,7 @@ export default function PosAppReleaseShowPage() {
   }
 
   const isSaving = mutation.isPending;
+  const downloadUrl = shareableDownloadUrl(release);
   const draft = changelog ?? release.changelog;
 
   return (
@@ -87,11 +90,18 @@ export default function PosAppReleaseShowPage() {
             label="SHA-256 (dicek tablet sebelum install)"
             value={<span className="break-all font-mono text-xs">{release.sha256}</span>}
           />
-          <div className="sm:col-span-2">
-            <Button variant="secondary" size="sm" onPress={() => window.open(release.fileUrl, "_blank")}>
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+            <Button size="sm" onPress={() => void copy(downloadUrl, "Link download disalin. Kirim ke siapa saja.")}>
+              <Icon icon="mdi:link-variant" width={16} />
+              Salin link download
+            </Button>
+            <Button variant="secondary" size="sm" onPress={() => window.open(downloadUrl, "_blank")}>
               <Icon icon="mdi:download" width={16} />
               Unduh APK
             </Button>
+            <Typography type="body-xs" color="muted" className="w-full">
+              Siapa pun yang punya link ini bisa langsung mengunduh APK, tanpa login.
+            </Typography>
           </div>
         </Card.Content>
       </Card>
