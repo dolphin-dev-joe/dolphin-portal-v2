@@ -7,7 +7,8 @@ type ButtonVariant =
   | "tertiary"
   | "outline"
   | "ghost"
-  | "danger";
+  | "danger"
+  | "danger-soft";
 
 type AlertStatus = "default" | "accent" | "success" | "warning" | "danger";
 

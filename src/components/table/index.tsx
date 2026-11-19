@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { BaseRecord } from "@refinedev/core";
-import { Pagination, Select, ListBox } from "@heroui/react";
+import { Pagination, Select, ListBox, Typography } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import {
@@ -154,11 +154,19 @@ export default function DataTable<T extends BaseRecord>({
         handleImport={handleImport}
       />
 
+      {/* Full-screen overlay. Must stay OUTSIDE .data-table-panel: the panel's
+          backdrop-filter traps `position: fixed` children inside the panel. */}
+      <LoadingScreen isLoading={isLoading && !isError} />
+
       {isError ? (
-        <div className="py-6 text-center text-danger">Failed to load data.</div>
+        <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-danger/30 bg-danger-soft py-12 text-center">
+          <Icon icon="heroicons:exclamation-triangle" className="size-8 text-danger" />
+          <Typography type="body-sm" className="font-medium text-danger-soft-foreground">
+            Gagal memuat data. Coba muat ulang halaman.
+          </Typography>
+        </div>
       ) : isLoading ? (
-        <>
-        <LoadingScreen isLoading={isLoading}/>
+        <div className="data-table-panel">
           {/* ── Card skeleton (mobile / tablet) ── */}
           <CardViewSkeleton<T>
             columns={columns}
@@ -172,9 +180,9 @@ export default function DataTable<T extends BaseRecord>({
             hasActions={hasRowActions}
             count={pageSize}
           />
-        </>
+        </div>
       ) : (
-        <>
+        <div className="data-table-panel">
           {/* Card View for mobile/tablet */}
           <CardView
             rows={rows}
@@ -199,10 +207,10 @@ export default function DataTable<T extends BaseRecord>({
 
           {/* Footer: page-size selector + pagination */}
           {withPagination && total > 0 && (
-            <div className="mt-2 flex flex-col-reverse items-center justify-between gap-4 border-t border-divider pt-4 sm:flex-row">
+            <div className="mt-4 flex flex-col-reverse items-center justify-between gap-4 border-t border-separator pt-4 sm:flex-row lg:mt-0 lg:bg-surface-secondary lg:px-5 lg:py-3">
               {/* Left: result count + page-size selector */}
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <div className="flex items-center gap-1.5 rounded-lg bg-default-100 px-3 py-1.5 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 rounded-full bg-default px-3 py-1.5 text-sm text-muted">
                   <Icon icon="mdi:database-outline" className="h-4 w-4 shrink-0" />
                   <span>
                     <span className="font-semibold text-foreground">
@@ -217,7 +225,7 @@ export default function DataTable<T extends BaseRecord>({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm text-muted">
                   <span className="hidden sm:inline">Baris per halaman</span>
                   <Select
                     aria-label="Jumlah data per halaman"
@@ -226,13 +234,13 @@ export default function DataTable<T extends BaseRecord>({
                     onChange={(value) => {
                       if (value != null) setPageSize(Number(value));
                     }}
-                    className="w-[5.5rem]"
+                    className="w-22"
                   >
                     <Select.Trigger>
                       <Select.Value />
                       <Select.Indicator />
                     </Select.Trigger>
-                    <Select.Popover className="min-w-[5.5rem]">
+                    <Select.Popover className="min-w-22">
                       <ListBox aria-label="Opsi jumlah data">
                         {PAGE_SIZE_OPTIONS.map((size) => (
                           <ListBox.Item
@@ -295,7 +303,7 @@ export default function DataTable<T extends BaseRecord>({
               )}
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

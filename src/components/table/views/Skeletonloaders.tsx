@@ -33,17 +33,17 @@ export function CardViewSkeleton<T extends BaseRecord>({
       {Array.from({ length: count }).map((_, cardIdx) => (
         <div
           key={cardIdx}
-          className="rounded-xl border border-default-100 bg-content1 p-4 shadow-sm"
+          className="overflow-hidden rounded-3xl border border-separator bg-surface"
         >
           {/* Title row */}
-          <div className="mb-3 border-b border-default-100 pb-3">
+          <div className="border-l-4 border-accent/40 bg-accent-soft px-4 py-3.5">
             <Skeleton className="h-5 w-2/3 rounded-md" />
           </div>
 
           {/* Key-value field rows — one per extra column */}
-          <div className="space-y-3">
+          <div className="divide-y divide-separator px-4">
             {Array.from({ length: fieldCount }).map((_, fieldIdx) => (
-              <div key={fieldIdx} className="flex items-center justify-between">
+              <div key={fieldIdx} className="flex items-center justify-between py-3">
                 <Skeleton className="h-3.5 w-1/4 rounded-md" />
                 <Skeleton
                   className={cn("h-3.5 rounded-md", boneWidth(1, fieldIdx))}
@@ -54,9 +54,9 @@ export function CardViewSkeleton<T extends BaseRecord>({
 
           {/* Action buttons */}
           {hasActions && (
-            <div className="mt-4 flex items-center justify-end gap-2 border-t border-default-100 pt-3">
-              <Skeleton className="h-8 w-8 rounded-md" />
-              <Skeleton className="h-8 w-8 rounded-md" />
+            <div className="flex items-center justify-end gap-2 border-t border-separator bg-surface-secondary px-4 py-2">
+              <Skeleton className="size-8 rounded-lg" />
+              <Skeleton className="size-8 rounded-lg" />
             </div>
           )}
         </div>
@@ -81,18 +81,18 @@ export function TableViewSkeleton<T extends BaseRecord>({
   const visibleCols = columns.filter((c) => c.key !== "actions");
 
   return (
-    <div className="hidden lg:block">
-      <div className="overflow-x-auto rounded-xl border border-default-100">
-        <table className="min-w-150 w-full table-auto border-collapse">
+    <div className="hidden p-2 lg:block">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-150 table-auto border-separate border-spacing-0">
           {/* Header */}
           <thead>
-            <tr className="border-b border-default-100 bg-default-50">
+            <tr>
               {visibleCols.map((col, idx) => (
                 <th
                   key={col.key}
                   className={cn(
-                    "py-3",
-                    idx === 0 ? "pl-8 pr-4" : "px-4",
+                    "bg-accent-soft py-3.5 first:rounded-s-2xl last:rounded-e-2xl",
+                    idx === 0 ? "pl-6 pr-4" : "px-4",
                     col.align === "center" && "text-center",
                     col.align === "end" && "text-end",
                   )}
@@ -107,7 +107,7 @@ export function TableViewSkeleton<T extends BaseRecord>({
                 </th>
               ))}
               {hasActions && (
-                <th className="py-3 pl-4 pr-12 text-end">
+                <th className="rounded-e-2xl bg-accent-soft py-3.5 pl-4 pr-6 text-end">
                   <Skeleton className="ml-auto h-3.5 w-14 rounded-md" />
                 </th>
               )}
@@ -119,14 +119,14 @@ export function TableViewSkeleton<T extends BaseRecord>({
             {Array.from({ length: count }).map((_, rowIdx) => (
               <tr
                 key={rowIdx}
-                className="border-b border-default-100 last:border-0"
+                className="even:bg-surface-secondary"
               >
                 {visibleCols.map((col, colIdx) => (
                   <td
                     key={col.key}
                     className={cn(
-                      "py-3",
-                      colIdx === 0 ? "pl-8 pr-4" : "px-4",
+                      "py-3.5",
+                      colIdx === 0 ? "pl-6 pr-4" : "px-4",
                       col.align === "center" && "text-center",
                       col.align === "end" && "text-end",
                     )}
@@ -142,10 +142,10 @@ export function TableViewSkeleton<T extends BaseRecord>({
                   </td>
                 ))}
                 {hasActions && (
-                  <td className="py-3 pl-4 pr-12">
+                  <td className="py-3.5 pl-4 pr-6">
                     <div className="flex items-center justify-end gap-1.5">
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="size-8 rounded-lg" />
+                      <Skeleton className="size-8 rounded-lg" />
                     </div>
                   </td>
                 )}

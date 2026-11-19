@@ -1,4 +1,4 @@
-import { Button, Card, Dropdown } from "@heroui/react";
+import { Button, Card, Dropdown, Typography } from "@heroui/react";
 // import {
 //   PencilIcon,
 //   EyeIcon,
@@ -43,6 +43,22 @@ export function CardView<T extends BaseRecord>({
 
   const rowsArray = Array.isArray(rows) ? rows : [];
 
+  if (rowsArray.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-separator py-12 text-center lg:hidden">
+        <span className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <Icon icon="heroicons:inbox" className="size-6" />
+        </span>
+        <Typography type="body-sm" className="font-medium">
+          Belum ada data
+        </Typography>
+        <Typography type="body-xs" color="muted">
+          Data yang cocok akan muncul di sini.
+        </Typography>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:hidden">
       {rowsArray.map((row) => {
@@ -54,60 +70,66 @@ export function CardView<T extends BaseRecord>({
         return (
           <Card
             key={String(row.id)}
-            className="border border-default-100 shadow-sm transition-shadow hover:shadow-md"
+            className="overflow-hidden transition-shadow hover:shadow-lg"
           >
-            <Card.Content className="p-4">
-              {/* Header - First column as title */}
-              <div className="mb-3 border-b border-default-100 pb-3">
-                <h3 className="text-base font-semibold text-gray-800">
+            <Card.Content className="gap-0 p-0">
+              {/* Header - first column as title on a soft accent gradient */}
+              <div className="flex items-center gap-3 bg-linear-to-r from-accent/15 via-accent/5 to-transparent px-4 py-3.5">
+                <span className="size-2 shrink-0 rounded-full bg-accent" />
+                <Typography
+                  type="body"
+                  className="min-w-0 truncate font-semibold text-foreground"
+                >
                   {firstColumn ? getColumnValue(row, firstColumn) : String(row.id)}
-                </h3>
+                </Typography>
               </div>
 
-              {/* Other columns as key-value pairs */}
-              <div className="space-y-2">
-                {otherColumns.map((column) => (
-                  <div
-                    key={column.key}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="text-gray-500">{column.title}</span>
-                    <span className="font-medium text-gray-800">
-                      {getColumnValue(row, column)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {/* Other columns - label above value in a 2-column grid */}
+              {otherColumns.length > 0 && (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3.5">
+                  {otherColumns.map((column) => (
+                    <div key={column.key} className="flex min-w-0 flex-col gap-0.5">
+                      <span className="text-xs text-accent/80">{column.title}</span>
+                      <span className="min-w-0 wrap-break-word text-sm font-medium text-foreground">
+                        {getColumnValue(row, column)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Actions */}
               {hasRowActions && (
-                <div className="mt-4 flex items-center justify-end gap-2 border-t border-default-100 pt-3">
+                <div className="flex items-center justify-end gap-1 border-t border-accent/10 px-3 py-2">
                   {actionColumns.includes(ActionButton.Edit) && (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       isIconOnly
                       size="sm"
                       aria-label="Edit"
+                      className="text-accent hover:bg-accent-soft"
                       onPress={() => onEdit(row.id as string | number)}
                     >
-                      <Icon icon="heroicons:pencil" className="h-3 w-3" />
+                      <Icon icon="heroicons:pencil-square" className="size-4" />
                     </Button>
                   )}
                   {actionColumns.includes(ActionButton.Show) && (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       isIconOnly
                       size="sm"
                       aria-label="View"
+                      className="text-accent hover:bg-accent-soft"
                       onPress={() => onShow(row.id as string | number)}
                     >
-                      <Icon icon="heroicons:eye" className="h-4 w-4" />
+                      <Icon icon="heroicons:eye" className="size-4" />
                     </Button>
                   )}
                   {actionColumns.includes(ActionButton.Delete) && (
                     <AlertDialog
                       triggerLabel="Delete"
-                      triggerContent={<Icon icon="heroicons:trash" className="h-4 w-4" />}
+                      triggerContent={<Icon icon="heroicons:trash" className="size-4" />}
+                      triggerVariant="danger-soft"
                       triggerIsIconOnly
                       triggerAriaLabel="Delete"
                       title="Delete confirmation"
@@ -128,7 +150,7 @@ export function CardView<T extends BaseRecord>({
                         <Dropdown key={btn.key}>
                           <Dropdown.Trigger>
                             <Button
-                              variant={btn.variant ?? "outline"}
+                              variant={btn.variant ?? "ghost"}
                               isIconOnly
                               size="sm"
                               isDisabled={disabled}

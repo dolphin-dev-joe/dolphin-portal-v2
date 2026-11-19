@@ -1,6 +1,13 @@
 import { useMemo } from "react";
 import type { BaseRecord } from "@refinedev/core";
-import { Button, cn, Dropdown, EmptyState, Table } from "@heroui/react";
+import {
+  Button,
+  cn,
+  Dropdown,
+  EmptyState,
+  Table,
+  Typography,
+} from "@heroui/react";
 // import {
 //   PencilIcon,
 //   EyeIcon,
@@ -64,8 +71,8 @@ export function TableView<T extends BaseRecord>({
   };
 
   return (
-    <div className="hidden lg:block">
-      <Table>
+    <div className="hidden p-2 lg:block">
+      <Table variant="secondary">
         <Table.ScrollContainer>
           <Table.Content aria-label="Data table" className="min-w-150">
             <Table.Header>
@@ -75,8 +82,8 @@ export function TableView<T extends BaseRecord>({
                   className={cn(
                     column.align === "center" && "text-center",
                     column.align === "end" && "text-end",
-                    column.key === "actions" && "pr-12",
-                    idx === 0 && "pl-8",
+                    column.key === "actions" && "pr-6",
+                    idx === 0 && "pl-6",
                   )}
                   isRowHeader={
                     column.isRowHeader ??
@@ -91,9 +98,16 @@ export function TableView<T extends BaseRecord>({
             <Table.Body
               items={rowsArray}
               renderEmptyState={() => (
-                <EmptyState className="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
-                  <Icon icon="heroicons:inbox" className="size-6 text-muted" />
-                  <span className="text-sm text-muted">No results found</span>
+                <EmptyState className="flex h-full w-full flex-col items-center justify-center gap-3 py-12 text-center">
+                  <span className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent">
+                    <Icon icon="heroicons:inbox" className="size-6" />
+                  </span>
+                  <Typography type="body-sm" className="font-medium">
+                    Belum ada data
+                  </Typography>
+                  <Typography type="body-xs" color="muted">
+                    Data yang cocok akan muncul di sini.
+                  </Typography>
                 </EmptyState>
               )}
             >
@@ -105,38 +119,41 @@ export function TableView<T extends BaseRecord>({
                       className={cn(
                         column.align === "center" && "text-center",
                         column.align === "end" && "text-end",
-                        column.key === "actions" && "pr-12",
-                        idx === 0 && "pl-8",
+                        column.key === "actions" && "pr-6",
+                        idx === 0 && "pl-6 font-medium",
                       )}
                     >
                       {column.key === "actions" ? (
                         <div className="flex items-center justify-end gap-1">
                           {actionColumns.includes(ActionButton.Edit) && (
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               isIconOnly
                               size="sm"
                               aria-label="Edit"
+                              className="text-accent hover:bg-accent-soft"
                               onPress={() => onEdit(row.id as string | number)}
                             >
-                              <Icon icon="heroicons:pencil" className="h-3 w-3" />
+                              <Icon icon="heroicons:pencil-square" className="size-4" />
                             </Button>
                           )}
                           {actionColumns.includes(ActionButton.Show) && (
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               isIconOnly
                               size="sm"
                               aria-label="View"
+                              className="text-muted hover:bg-default hover:text-foreground"
                               onPress={() => onShow(row.id as string | number)}
                             >
-                              <Icon icon="heroicons:eye" className="h-4 w-4" />
+                              <Icon icon="heroicons:eye" className="size-4" />
                             </Button>
                           )}
                           {actionColumns.includes(ActionButton.Delete) && (
                             <AlertDialog
                               triggerLabel="Delete"
-                              triggerContent={<Icon icon="heroicons:trash" className="h-4 w-4" />}
+                              triggerContent={<Icon icon="heroicons:trash" className="size-4" />}
+                              triggerVariant="danger-soft"
                               triggerIsIconOnly
                               triggerAriaLabel="Delete"
                               title="Delete confirmation"
@@ -160,7 +177,7 @@ export function TableView<T extends BaseRecord>({
                                 <Dropdown key={btn.key}>
                                   <Dropdown.Trigger>
                                     <Button
-                                      variant={btn.variant ?? "outline"}
+                                      variant={btn.variant ?? "ghost"}
                                       isIconOnly
                                       size="sm"
                                       isDisabled={disabled}

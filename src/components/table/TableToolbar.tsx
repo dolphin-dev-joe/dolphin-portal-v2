@@ -7,6 +7,7 @@ import {
   ListBox,
   SearchField,
   Select,
+  Typography,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -86,12 +87,16 @@ export function TableToolbar<T extends BaseRecord>({
         <div>
           <Heading className="my-auto text-xl font-semibold">{label}</Heading>
           {description && (
-            <p className="mt-1 text-sm text-default-500">{description}</p>
+            <Typography type="body-sm" color="muted" className="mt-1">
+              {description}
+            </Typography>
           )}
         </div>
       )}
       {!label && description && (
-        <p className="text-sm text-default-500">{description}</p>
+        <Typography type="body-sm" color="muted">
+          {description}
+        </Typography>
       )}
 
       <div
@@ -173,12 +178,14 @@ export function TableToolbar<T extends BaseRecord>({
                 variant="outline"
                 onPress={() => setIsFilterOpen(!isFilterOpen)}
                 aria-label="Toggle filters panel"
-                className={cn(isFilterOpen && "bg-default-100")}
+                className={cn(
+                  isFilterOpen && "border-accent bg-accent-soft text-accent-soft-foreground",
+                )}
               >
                 <Icon icon="mdi:filter-variant" className="h-4 w-4" />
                 <span>Filters</span>
                 {activeFiltersCount > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white text-[10px] font-bold">
+                  <span className="flex size-5 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -221,7 +228,7 @@ export function TableToolbar<T extends BaseRecord>({
                   <Dropdown.Trigger>
                     <span
                       aria-label="More actions"
-                      className="inline-flex items-center justify-center p-2 cursor-pointer rounded-lg border border-divider hover:bg-default-100"
+                      className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-separator p-2 hover:bg-default"
                     >
                       <Icon icon="mdi:dots-horizontal" className="h-5 w-5" />
                     </span>
@@ -275,7 +282,7 @@ export function TableToolbar<T extends BaseRecord>({
 
       {/* Collapsible Filter Panel */}
       {isFilterOpen && customFilters.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 rounded-xl border border-divider bg-default-50 p-5 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 glass-panel mt-2 p-5 animate-in fade-in slide-in-from-top-2 duration-200">
           {customFilters.map((filter) => {
             const isMultiple = filter.type === "multiple";
             const currentValues = filterValues[filter.key];
@@ -290,7 +297,7 @@ export function TableToolbar<T extends BaseRecord>({
 
             return (
               <div key={filter.key} className="flex flex-col gap-1.5 w-full">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted">
                   {filter.label}
                 </span>
                 <div className="flex items-center gap-2">
@@ -370,7 +377,7 @@ export function TableToolbar<T extends BaseRecord>({
                           [filter.key]: new Set(["all"]),
                         }))
                       }
-                      className="text-muted-foreground hover:text-danger hover:bg-danger/10"
+                      className="text-muted hover:bg-danger-soft hover:text-danger"
                     >
                       <Icon icon="mdi:close" className="h-4 w-4" />
                     </Button>
