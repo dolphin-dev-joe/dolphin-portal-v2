@@ -159,6 +159,15 @@ export const resources = [
     },
   },
   {
+    name: "pos-statistics",
+    list: "/pos/statistics",
+    meta: {
+      label: "Statistik",
+      parent: "pos-management",
+      icon: "mdi:chart-areaspline",
+    },
+  },
+  {
     name: "pos-perfume-categories",
     list: "/pos/perfume-categories",
     create: "/pos/perfume-categories/create",

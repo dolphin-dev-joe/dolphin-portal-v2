@@ -448,3 +448,52 @@
         -webkit-backdrop-filter: none;
     }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Chart tokens (POS → Statistik)
+ *
+ * Categorical slots, sequential ramp and delta colors come from the dataviz
+ * reference palette, re-validated against this theme's frosted card surface
+ * (light ≈ #f5fcff, dark ≈ #06111d): every adjacent pair clears the CVD and
+ * normal-vision gates in both modes. Light slot 3 (aqua) is under 3:1, so
+ * charts using it always print labels next to the mark.
+ *
+ * Colors follow the entity, never the rank: cash = 1, transfer = 2, qris = 3.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+    --chart-1: #2a78d6;
+    --chart-2: #eb6834;
+    --chart-3: #1baf7a;
+    --chart-other: #8a96a8;
+    --chart-grid: var(--separator);
+    --chart-axis: var(--border);
+    --chart-hover: oklch(61.9% 0.1683 252.66 / 0.08);
+    /* Sequential (heatmap), light → dark = few → many. */
+    --chart-seq-1: #cde2fb;
+    --chart-seq-2: #9ec5f4;
+    --chart-seq-3: #6da7ec;
+    --chart-seq-4: #3987e5;
+    --chart-seq-5: #1c5cab;
+    --chart-empty: oklch(93.73% 0.016 252.66);
+    /* Delta text (≥ 4.5:1 on the card surface). Always paired with an arrow. */
+    --chart-good: #006300;
+    --chart-bad: #c42b2b;
+}
+
+.dark,
+[data-theme="dark"] {
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-other: #6b778a;
+    --chart-hover: oklch(61.9% 0.1683 252.66 / 0.14);
+    /* On a dark surface "many" reads as brighter. */
+    --chart-seq-1: #104281;
+    --chart-seq-2: #1c5cab;
+    --chart-seq-3: #2a78d6;
+    --chart-seq-4: #5598e7;
+    --chart-seq-5: #9ec5f4;
+    --chart-empty: oklch(27.21% 0.03 252.66);
+    --chart-good: #0ca30c;
+    --chart-bad: #e66767;
+}
