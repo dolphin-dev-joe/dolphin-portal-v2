@@ -1,5 +1,5 @@
 import { Heading } from "@components/heading";
-import StatCard from "@components/stat-card";
+import StatCard, { StatCardGrid } from "@components/stat-card";
 import { Text } from "@components/text";
 import { Icon } from "@iconify/react";
 
@@ -22,7 +22,7 @@ export default function LandingDashboard({ stats }: { stats: LandingStats }) {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <StatCardGrid>
         <StatCard
           title="Parfum"
           value={String(stats.totalPerfumes)}
@@ -59,7 +59,7 @@ export default function LandingDashboard({ stats }: { stats: LandingStats }) {
           delay={0.4}
           href="/faqs"
         />
-      </div>
+      </StatCardGrid>
     </div>
   );
 }

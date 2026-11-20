@@ -1,7 +1,7 @@
 import { Heading } from "@components/heading";
-import StatCard from "@components/stat-card";
+import StatCard, { StatCardGrid } from "@components/stat-card";
 import { Text } from "@components/text";
-import { Card } from "@heroui/react";
+import { Card, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 interface RecentTransaction {
@@ -52,16 +52,25 @@ const PAYMENT_COLORS: Record<string, string> = {
 export default function DashboardContent({ stats }: { stats: PosStats }) {
   return (
     <div className="space-y-8 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
-      <div className="space-y-1">
-        <Heading as="h1" size="3xl" weight="bold">
-          POS Dashboard
-        </Heading>
-        <Text muted size="sm">
-          Ringkasan operasional POS Dolphin Laundry hari ini.
-        </Text>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <Heading as="h1" size="3xl" weight="bold">
+            POS Dashboard
+          </Heading>
+          <Text muted size="sm">
+            Ringkasan operasional POS Dolphin Laundry hari ini.
+          </Text>
+        </div>
+        <Link
+          href="/pos/statistics"
+          className="flex items-center gap-1.5 text-sm font-medium no-underline"
+        >
+          <Icon icon="mdi:chart-areaspline" className="size-4" />
+          Lihat statistik bisnis
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      <StatCardGrid>
         <StatCard
           title="Transaksi Hari Ini"
           value={String(stats.todayTransactions)}
@@ -106,7 +115,7 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
           delay={0.4}
           href="/pos/services"
         />
-      </div>
+      </StatCardGrid>
 
       <Card variant="secondary" className="border-none shadow-sm">
         <Card.Header>

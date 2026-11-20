@@ -1,5 +1,5 @@
 import { Heading } from "@components/heading";
-import StatCard from "@components/stat-card";
+import StatCard, { StatCardGrid } from "@components/stat-card";
 import { Text } from "@components/text";
 import { Icon } from "@iconify/react";
 
@@ -21,7 +21,7 @@ export default function PortalDashboard({ stats }: { stats: PortalStats }) {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <StatCardGrid>
         <StatCard
           title="Total Pengguna"
           value={String(stats.totalUsers)}
@@ -47,7 +47,7 @@ export default function PortalDashboard({ stats }: { stats: PortalStats }) {
           textColor="text-purple-600 dark:text-purple-400"
           delay={0.3}
         />
-      </div>
+      </StatCardGrid>
     </div>
   );
 }

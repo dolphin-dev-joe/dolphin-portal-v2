@@ -1,5 +1,5 @@
 import { Heading } from "@components/heading";
-import StatCard from "@components/stat-card";
+import StatCard, { StatCardGrid } from "@components/stat-card";
 import { Text } from "@components/text";
 import { Icon } from "@iconify/react";
 
@@ -25,7 +25,7 @@ export default function ContentDashboard({ stats }: { stats: ContentStats }) {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCardGrid>
         <StatCard
           title="Draft & Ide"
           value={String(stats.drafts + stats.ideas)}
@@ -80,7 +80,7 @@ export default function ContentDashboard({ stats }: { stats: ContentStats }) {
           delay={0.6}
           href="/articles"
         />
-      </div>
+      </StatCardGrid>
     </div>
   );
 }
