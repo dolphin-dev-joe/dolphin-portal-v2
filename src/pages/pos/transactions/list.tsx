@@ -2,6 +2,7 @@ import DataTable from "@components/table";
 import { ActionButton, CustomFilter } from "@components/table/types";
 import { columnsPosTransaction } from "@features/pos/transactions/columns";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
+import { useWhatsAppRowAction } from "@features/pos/transactions/whatsapp";
 
 const statusFilters: CustomFilter<IPosTransaction>[] = [
   {
@@ -33,6 +34,7 @@ const statusFilters: CustomFilter<IPosTransaction>[] = [
 ];
 
 export default function PosTransactionsListPage() {
+  const whatsAppAction = useWhatsAppRowAction();
   return (
     <DataTable<IPosTransaction>
       resource="pos-transactions"
@@ -42,6 +44,7 @@ export default function PosTransactionsListPage() {
       withSearch
       customFilters={statusFilters}
       actionColumns={[ActionButton.Show]}
+      customRowActionButtons={[whatsAppAction]}
     />
   );
 }
