@@ -1,6 +1,9 @@
 import DataTable from "@components/table";
 import { ActionButton, CustomFilter } from "@components/table/types";
-import { columnsPosTransaction } from "@features/pos/transactions/columns";
+import {
+  columnsPosTransaction,
+  transactionExportOptions,
+} from "@features/pos/transactions/columns";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
 import { useWhatsAppRowAction } from "@features/pos/transactions/whatsapp";
 
@@ -43,6 +46,7 @@ export default function PosTransactionsListPage() {
       columns={columnsPosTransaction}
       withSearch
       customFilters={statusFilters}
+      exportOptions={transactionExportOptions("transaksi-pos", "Transaksi POS")}
       actionColumns={[ActionButton.Show]}
       customRowActionButtons={[whatsAppAction]}
     />

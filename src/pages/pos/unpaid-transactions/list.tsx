@@ -1,6 +1,9 @@
 import DataTable from "@components/table";
 import { ActionButton } from "@components/table/types";
-import { columnsPosTransaction } from "@features/pos/transactions/columns";
+import {
+  columnsPosTransaction,
+  transactionExportOptions,
+} from "@features/pos/transactions/columns";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
 import { useWhatsAppRowAction } from "@features/pos/transactions/whatsapp";
 
@@ -16,6 +19,7 @@ export default function PosUnpaidTransactionsListPage() {
       columns={columnsPosTransaction}
       withSearch
       permanentFilters={[{ field: "outstanding", value: true }]}
+      exportOptions={transactionExportOptions("transaksi-belum-dibayar", "Transaksi Belum Dibayar")}
       actionColumns={[ActionButton.Show]}
       customRowActionButtons={[whatsAppAction]}
     />

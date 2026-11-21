@@ -2,36 +2,51 @@ import { useState } from "react";
 import { useCustom } from "@refinedev/core";
 import { Button, Skeleton, Spinner, Typography } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { IPaymentProofLink, IPosTransaction } from "./interfaces";
+import { CourierFeeKind, IPaymentProofLink, IPosTransaction } from "./interfaces";
 
 // Methods where the cashier must photograph the customer's proof on the POS.
 const PROOF_METHODS = ["qris", "transfer"];
+
+interface PaymentProofProps {
+  tx: IPosTransaction;
+  /**
+   * Show the proof of a courier charge paid on its own instead of the
+   * order's. Only rendered when that photo exists (a charge paid with the
+   * order is covered by the order's proof).
+   */
+  fee?: { kind: CourierFeeKind; label: string; proofPath: string | null };
+}
 
 /**
  * Photo of the QRIS / transfer proof taken on the POS. The bucket is
  * private: the API hands out a link that expires after a few minutes, so it
  * is fetched fresh every time the page opens.
  */
-export function PaymentProof({ tx }: { tx: IPosTransaction }) {
+export function PaymentProof({ tx, fee }: PaymentProofProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [renewed, setRenewed] = useState(false);
-  const hasProof = !!tx.paymentProofPath;
+  const hasProof = fee ? !!fee.proofPath : !!tx.paymentProofPath;
 
   const { result, query } = useCustom<{ data: IPaymentProofLink }>({
     url: `pos/transactions/${tx.id}/payment-proof`,
     method: "get",
+    config: fee ? { query: { fee: fee.kind } } : undefined,
     queryOptions: { enabled: hasProof, staleTime: 0, gcTime: 0 },
     errorNotification: false,
   });
 
-  if (!tx.paymentMethod || !PROOF_METHODS.includes(tx.paymentMethod)) return null;
+  if (fee) {
+    if (!hasProof) return null;
+  } else if (!tx.paymentMethod || !PROOF_METHODS.includes(tx.paymentMethod)) {
+    return null;
+  }
 
   const url = result?.data?.data?.url;
 
   return (
     <div className="pt-3 space-y-2">
       <Typography type="body-sm" color="muted">
-        Bukti Bayar
+        {fee ? `Bukti Bayar ${fee.label}` : "Bukti Bayar"}
       </Typography>
 
       {!hasProof ? (

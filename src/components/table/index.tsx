@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { BaseRecord } from "@refinedev/core";
 import { Pagination, Select, ListBox, Typography } from "@heroui/react";
+import type { CrudSort } from "@refinedev/core";
 import { Icon } from "@iconify/react";
 
 import {
@@ -10,7 +11,10 @@ import {
   type CustomActionButton,
   type CustomFilter,
   type CustomRowActionButton,
+  type DataTableExportOptions,
 } from "./types";
+import { ExportMenu } from "./export/ExportMenu";
+import { useTableExport } from "./export/useTableExport";
 import { TableToolbar } from "./TableToolbar";
 import { CardView, TableView } from "./views";
 import { useDataTableData } from "./hooks/useDataTableData";
@@ -58,6 +62,13 @@ interface DataTableProps<T extends BaseRecord> {
   customFilters?: CustomFilter<T>[];
   /** Filters yang selalu dikirim & dikunci (mis. status=cancelled). */
   permanentFilters?: { field: string; value: string | boolean }[];
+  /** Fixed sort order sent to the API (the endpoint default otherwise). */
+  sorters?: CrudSort[];
+  /**
+   * Adds an Export menu (Excel / PDF) that exports every row matching the
+   * current search and filters, using the columns (see `ColumnTable.export`).
+   */
+  exportOptions?: DataTableExportOptions<T>;
   onActionPress?: Partial<ActionButtonHandlerMap<T>>;
 }
 
@@ -85,6 +96,8 @@ export default function DataTable<T extends BaseRecord>({
   customRowActionButtons = [],
   customFilters = [],
   permanentFilters = [],
+  sorters,
+  exportOptions,
   onActionPress,
 }: DataTableProps<T>) {
   const [searchValue, setSearchValue] = useState("");
@@ -102,6 +115,7 @@ export default function DataTable<T extends BaseRecord>({
     setPage,
     isLoading,
     isError,
+    filters,
   } = useDataTableData<T>({
     resource,
     pageSize,
@@ -109,6 +123,16 @@ export default function DataTable<T extends BaseRecord>({
     searchValue,
     filterValues,
     permanentFilters,
+    sorters,
+  });
+
+  const { exportAs, exporting } = useTableExport<T>({
+    resource,
+    label,
+    columns,
+    filters,
+    sorters,
+    options: exportOptions,
   });
 
   const { handleCreate, handleEdit, handleShow, handleDelete } =
@@ -152,6 +176,11 @@ export default function DataTable<T extends BaseRecord>({
         handleCreate={handleCreate}
         handleExport={handleExport}
         handleImport={handleImport}
+        exportMenu={
+          exportOptions ? (
+            <ExportMenu exporting={exporting} onExport={exportAs} />
+          ) : undefined
+        }
       />
 
       {/* Full-screen overlay. Must stay OUTSIDE .data-table-panel: the panel's

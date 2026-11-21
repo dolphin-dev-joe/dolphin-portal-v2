@@ -10,6 +10,7 @@ export default function PosCustomersListPage() {
       actionColumns={[ActionButton.Show]}
       columns={columnsPosCustomer}
       withSearch
+      exportOptions={{ fileName: "pelanggan-pos", title: "Pelanggan POS" }}
     />
   );
 }

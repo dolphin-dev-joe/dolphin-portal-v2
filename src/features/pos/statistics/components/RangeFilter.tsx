@@ -43,7 +43,7 @@ export default function RangeFilter({ preset, custom, onPreset, onCustom }: Rang
   };
 
   return (
-    <div className="flex flex-wrap items-start gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
       <ToggleButtonGroup
         aria-label="Periode"
         size="sm"
@@ -74,7 +74,7 @@ export default function RangeFilter({ preset, custom, onPreset, onCustom }: Rang
           onChange={handleCustom}
           maxValue={todayDate()}
           isInvalid={!!error}
-          className="w-64"
+          className="w-full sm:w-64"
         >
           <DateField.Group fullWidth>
             <DateField.InputContainer>
@@ -93,7 +93,7 @@ export default function RangeFilter({ preset, custom, onPreset, onCustom }: Rang
             </DateField.Suffix>
           </DateField.Group>
           <FieldError>{error}</FieldError>
-          <DateRangePicker.Popover className="flex w-full flex-col gap-3">
+          <DateRangePicker.Popover>
             <RangeCalendar aria-label="Pilih rentang tanggal">
               <RangeCalendar.Header>
                 <RangeCalendar.YearPickerTrigger>

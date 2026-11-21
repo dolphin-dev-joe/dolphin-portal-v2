@@ -3,7 +3,10 @@ import { Icon } from "@iconify/react";
 
 import DataTable from "@components/table";
 import { ActionButton, CustomRowActionButton } from "@components/table/types";
-import { columnsPosTransaction } from "@features/pos/transactions/columns";
+import {
+  columnsPosTransaction,
+  transactionExportOptions,
+} from "@features/pos/transactions/columns";
 import { IPosTransaction } from "@features/pos/transactions/interfaces";
 import LoadingScreen from "@components/loading/LoadingScreen";
 
@@ -56,6 +59,7 @@ export default function PosCancelledTransactionsListPage() {
         columns={columnsPosTransaction}
         withSearch
         permanentFilters={[{ field: "status", value: "cancelled" }]}
+        exportOptions={transactionExportOptions("transaksi-dibatalkan", "Transaksi Dibatalkan")}
         actionColumns={[ActionButton.Show]}
         customRowActionButtons={rowActions}
       />

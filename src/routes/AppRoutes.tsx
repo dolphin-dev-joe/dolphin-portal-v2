@@ -119,6 +119,12 @@ const CRUD: CrudPages[] = [
     edit: page(() => import("@pages/pos/services/edit")),
     show: page(() => import("@pages/pos/services/show")),
   },
+  // Pickup / delivery price list: two fixed rows, edit only.
+  {
+    path: "/pos/courier-fees",
+    list: page(() => import("@pages/pos/courier-fees/list")),
+    edit: page(() => import("@pages/pos/courier-fees/edit")),
+  },
   {
     path: "/pos/display-preview",
     list: page(() => import("@pages/pos/display-preview")),
@@ -146,6 +152,11 @@ const CRUD: CrudPages[] = [
   {
     path: "/pos/unpaid-transactions",
     list: page(() => import("@pages/pos/unpaid-transactions/list")),
+  },
+  // WhatsApp reminders: laundry ready for pickup, bills still open.
+  {
+    path: "/pos/reminders",
+    list: page(() => import("@pages/pos/reminders/list")),
   },
   // POS tablet builds: upload here, the tablets update themselves.
   {

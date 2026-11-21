@@ -21,6 +21,8 @@ import { IPosTransaction } from "@features/pos/transactions/interfaces";
 import { PaymentStatusChip, StatusChip } from "@features/pos/transactions/StatusChip";
 import { InfoField } from "@features/pos/transactions/InfoField";
 import { PaymentProof } from "@features/pos/transactions/PaymentProof";
+import { CourierInfo } from "@features/pos/transactions/CourierInfo";
+import { courierChargesOf } from "@features/pos/transactions/interfaces";
 import {
   STATUS_CONFIG,
   WORKFLOW,
@@ -314,6 +316,8 @@ export default function PosTransactionShowPage() {
         </Card.Content>
       </Card>
 
+      <CourierInfo tx={tx} />
+
       {/* Items */}
       <div className="space-y-2">
         <Typography
@@ -395,6 +399,14 @@ export default function PosTransactionShowPage() {
             </Typography>
             <Typography type="body-sm">{formatIDR(tx.subtotal)}</Typography>
           </div>
+          {courierChargesOf(tx).map((c) => (
+            <div key={c.kind} className="flex justify-between">
+              <Typography type="body-sm" color="muted">
+                {c.label}
+              </Typography>
+              <Typography type="body-sm">{formatIDR(c.amount)}</Typography>
+            </div>
+          ))}
           <Separator className="my-1" />
           <div className="flex justify-between items-center">
             <Typography type="body" weight="bold">

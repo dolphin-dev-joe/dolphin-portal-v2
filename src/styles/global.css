@@ -449,6 +449,48 @@
     }
 }
 
+/* Plain <table> elements (dashboard "Transaksi Terbaru", Statistik table
+   views) get the same accent look as the DataTable above. In the components
+   layer so utilities on a cell (pl-6, text-right, …) still win. */
+@layer components {
+    .accent-table {
+        width: 100%;
+        font-size: 0.875rem;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .accent-table th {
+        background-color: var(--accent-soft);
+        color: var(--accent-soft-foreground);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        padding: 0.75rem 1rem;
+        text-align: start;
+        border-bottom: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
+    }
+
+    .accent-table td {
+        padding: 0.75rem 1rem;
+        /* Scroll sideways on phones instead of wrapping "Rp 32.500". */
+        white-space: nowrap;
+        transition: background-color 120ms ease-out;
+    }
+
+    .accent-table tbody tr:nth-child(even) td {
+        background-color: color-mix(in oklab, var(--surface-secondary) 70%, transparent);
+    }
+
+    @media (hover: hover) {
+        .accent-table tbody tr:hover td {
+            background-color: var(--accent-soft);
+        }
+    }
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
  * Chart tokens (POS → Statistik)
  *
