@@ -53,18 +53,16 @@ export function DataTableView({
   align?: ("start" | "end")[];
 }) {
   return (
-    <div className="max-h-80 overflow-auto rounded-lg border border-(--chart-grid)">
-      <table className="w-full text-sm">
-        <thead className="sticky top-0 bg-surface-secondary">
+    <div className="max-h-80 overflow-auto rounded-xl">
+      {/* Same accent look as the DataTable (see .accent-table in global.css). */}
+      <table className="accent-table">
+        <thead>
           <tr>
             {headers.map((h, i) => (
               <th
                 key={h}
                 scope="col"
-                className={cn(
-                  "px-3 py-2 font-medium whitespace-nowrap text-muted",
-                  align?.[i] === "end" ? "text-right" : "text-left"
-                )}
+                className={cn("sticky top-0 z-10", align?.[i] === "end" ? "text-right" : "text-left")}
               >
                 {h}
               </th>
@@ -73,12 +71,12 @@ export function DataTableView({
         </thead>
         <tbody>
           {rows.map((row, r) => (
-            <tr key={r} className="border-t border-(--chart-grid)">
+            <tr key={r}>
               {row.map((cell, i) => (
                 <td
                   key={i}
                   className={cn(
-                    "px-3 py-1.5 whitespace-nowrap",
+                    "py-2 whitespace-nowrap",
                     align?.[i] === "end" && "text-right tabular-nums"
                   )}
                 >

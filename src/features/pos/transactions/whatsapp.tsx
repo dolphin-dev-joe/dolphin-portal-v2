@@ -8,7 +8,7 @@ import type { IPosTransaction } from "./interfaces";
 
 // Same wording as the POS app (dolphin_pos ReceiptTextBuilder.buildStatusUpdate),
 // so customers get identical messages whether they come from the cashier or the portal.
-const STORE_NAME = "Dolphin Laundry";
+export const STORE_NAME = "Dolphin Laundry";
 
 /** Indonesian number → wa.me form (628xx, no "+"). Returns "" when there are no digits. */
 export function normalizePhone(phone: string) {
@@ -75,11 +75,16 @@ export function useSendOrderWhatsApp() {
     const win = window.open("", "_blank");
     setPendingId(tx.id);
     try {
-      const { data: customer } = await getDataProvider().getOne<IPosCustomer>({
-        resource: "pos-customers",
-        id: tx.customerId,
-      });
-      const phone = normalizePhone(customer.phone ?? "");
+      // Lists include the phone; older API builds and the detail page may not.
+      let rawPhone = tx.customerPhone;
+      if (rawPhone === undefined) {
+        const { data: customer } = await getDataProvider().getOne<IPosCustomer>({
+          resource: "pos-customers",
+          id: tx.customerId,
+        });
+        rawPhone = customer.phone;
+      }
+      const phone = normalizePhone(rawPhone ?? "");
       if (!phone) {
         win?.close();
         notify?.({

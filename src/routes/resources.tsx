@@ -167,77 +167,8 @@ export const resources = [
       icon: "mdi:chart-areaspline",
     },
   },
-  {
-    name: "pos-perfume-categories",
-    list: "/pos/perfume-categories",
-    create: "/pos/perfume-categories/create",
-    edit: "/pos/perfume-categories/edit/:id",
-    show: "/pos/perfume-categories/show/:id",
-    meta: {
-      canDelete: true,
-      label: "Kategori Parfum",
-      parent: "pos-management",
-      icon: "carbon:category-new-each",
-    },
-  },
-  {
-    name: "pos-service-categories",
-    list: "/pos/service-categories",
-    create: "/pos/service-categories/create",
-    edit: "/pos/service-categories/edit/:id",
-    show: "/pos/service-categories/show/:id",
-    meta: {
-      canDelete: true,
-      label: "Kategori Layanan",
-      parent: "pos-management",
-      icon: "mdi:shape",
-    },
-  },
-  {
-    name: "pos-perfumes",
-    list: "/pos/perfumes",
-    create: "/pos/perfumes/create",
-    edit: "/pos/perfumes/edit/:id",
-    show: "/pos/perfumes/show/:id",
-    meta: {
-      canDelete: true,
-      label: "Parfum",
-      parent: "pos-management",
-      icon: "tabler:perfume",
-    },
-  },
-  {
-    name: "pos-services",
-    list: "/pos/services",
-    create: "/pos/services/create",
-    edit: "/pos/services/edit/:id",
-    show: "/pos/services/show/:id",
-    meta: {
-      canDelete: true,
-      label: "Layanan",
-      parent: "pos-management",
-      icon: "mdi:washing-machine",
-    },
-  },
-  {
-    name: "pos-display-preview",
-    list: "/pos/display-preview",
-    meta: {
-      label: "Preview Display",
-      parent: "pos-management",
-      icon: "mdi:cellphone-screenshot",
-    },
-  },
-  {
-    name: "pos-customers",
-    list: "/pos/customers",
-    show: "/pos/customers/show/:id",
-    meta: {
-      label: "Pelanggan",
-      parent: "pos-management",
-      icon: "mdi:account-multiple",
-    },
-  },
+
+  // ── POS › Transaksi (group only) ──
   {
     name: "pos-transactions-group",
     meta: {
@@ -277,13 +208,126 @@ export const resources = [
     },
   },
   {
+    name: "pos-reminders",
+    list: "/pos/reminders",
+    show: "/pos/transactions/show/:id",
+    meta: {
+      label: "Pengingat WA",
+      parent: "pos-transactions-group",
+      icon: "mdi:whatsapp",
+    },
+  },
+
+  {
+    name: "pos-customers",
+    list: "/pos/customers",
+    show: "/pos/customers/show/:id",
+    meta: {
+      label: "Pelanggan",
+      parent: "pos-management",
+      icon: "mdi:account-multiple",
+    },
+  },
+
+  // ── POS › Katalog (group only) — products & their categories ──
+  {
+    name: "pos-catalog-group",
+    meta: {
+      label: "Katalog",
+      parent: "pos-management",
+      icon: "mdi:package-variant-closed",
+    },
+  },
+  {
+    name: "pos-perfumes",
+    list: "/pos/perfumes",
+    create: "/pos/perfumes/create",
+    edit: "/pos/perfumes/edit/:id",
+    show: "/pos/perfumes/show/:id",
+    meta: {
+      canDelete: true,
+      label: "Parfum",
+      parent: "pos-catalog-group",
+      icon: "tabler:perfume",
+    },
+  },
+  {
+    name: "pos-perfume-categories",
+    list: "/pos/perfume-categories",
+    create: "/pos/perfume-categories/create",
+    edit: "/pos/perfume-categories/edit/:id",
+    show: "/pos/perfume-categories/show/:id",
+    meta: {
+      canDelete: true,
+      label: "Kategori Parfum",
+      parent: "pos-catalog-group",
+      icon: "carbon:category-new-each",
+    },
+  },
+  {
+    name: "pos-services",
+    list: "/pos/services",
+    create: "/pos/services/create",
+    edit: "/pos/services/edit/:id",
+    show: "/pos/services/show/:id",
+    meta: {
+      canDelete: true,
+      label: "Layanan",
+      parent: "pos-catalog-group",
+      icon: "mdi:washing-machine",
+    },
+  },
+  {
+    name: "pos-service-categories",
+    list: "/pos/service-categories",
+    create: "/pos/service-categories/create",
+    edit: "/pos/service-categories/edit/:id",
+    show: "/pos/service-categories/show/:id",
+    meta: {
+      canDelete: true,
+      label: "Kategori Layanan",
+      parent: "pos-catalog-group",
+      icon: "mdi:shape",
+    },
+  },
+  {
+    name: "pos-courier-fees",
+    list: "/pos/courier-fees",
+    edit: "/pos/courier-fees/edit/:id",
+    meta: {
+      canDelete: false,
+      label: "Biaya Antar Jemput",
+      parent: "pos-catalog-group",
+      icon: "mdi:moped-outline",
+    },
+  },
+
+  // ── POS › Aplikasi POS (group only) — device app & customer display ──
+  {
+    name: "pos-app-group",
+    meta: {
+      label: "Aplikasi POS",
+      parent: "pos-management",
+      icon: "mdi:tablet-cellphone",
+    },
+  },
+  {
+    name: "pos-display-preview",
+    list: "/pos/display-preview",
+    meta: {
+      label: "Preview Display",
+      parent: "pos-app-group",
+      icon: "mdi:cellphone-screenshot",
+    },
+  },
+  {
     name: "pos-app-releases",
     list: "/pos/app-releases",
     create: "/pos/app-releases/create",
     show: "/pos/app-releases/show/:id",
     meta: {
       label: "Rilis Aplikasi",
-      parent: "pos-management",
+      parent: "pos-app-group",
       icon: "mdi:cellphone-arrow-down",
     },
   },

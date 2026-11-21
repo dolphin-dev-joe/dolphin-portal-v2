@@ -16,6 +16,7 @@ import {
 //   EllipsisVerticalIcon,
 // } from "@heroicons/react/24/outline";
 import { ActionButton } from "../types";
+import { ColumnTitle, HintTooltip } from "../TableTooltip";
 import type { ColumnTable, CustomRowActionButton } from "../types";
 import { AlertDialog } from "@/components/alert-dialog";
 import { Icon } from "@iconify/react";
@@ -90,7 +91,7 @@ export function TableView<T extends BaseRecord>({
                     (columnsTable[0]?.key === "actions" ? idx === 1 : idx === 0)
                   }
                 >
-                  {column.title}
+                  <ColumnTitle title={column.title} tooltip={column.tooltip} />
                 </Table.Column>
               ))}
             </Table.Header>
@@ -216,21 +217,26 @@ export function TableView<T extends BaseRecord>({
                                 </Dropdown>
                               );
                             }
+                            const hint =
+                              typeof btn.tooltip === "function"
+                                ? btn.tooltip(row)
+                                : btn.tooltip;
                             return (
-                              <Button
-                                key={btn.key}
-                                variant={btn.variant ?? "outline"}
-                                isIconOnly={!btn.label}
-                                size="sm"
-                                isDisabled={disabled}
-                                aria-label={
-                                  btn.ariaLabel ?? btn.label ?? btn.key
-                                }
-                                onPress={() => void btn.onPress?.(row)}
-                              >
-                                {btn.icon}
-                                {btn.label}
-                              </Button>
+                              <HintTooltip key={btn.key} content={hint}>
+                                <Button
+                                  variant={btn.variant ?? "outline"}
+                                  isIconOnly={!btn.label}
+                                  size="sm"
+                                  isDisabled={disabled}
+                                  aria-label={
+                                    btn.ariaLabel ?? btn.label ?? btn.key
+                                  }
+                                  onPress={() => void btn.onPress?.(row)}
+                                >
+                                  {btn.icon}
+                                  {btn.label}
+                                </Button>
+                              </HintTooltip>
                             );
                           })}
                         </div>

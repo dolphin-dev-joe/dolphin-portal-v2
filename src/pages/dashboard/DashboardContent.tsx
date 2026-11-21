@@ -3,6 +3,8 @@ import StatCard, { StatCardGrid } from "@components/stat-card";
 import { Text } from "@components/text";
 import { Card, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { PAYMENT_LABELS } from "@features/pos/transactions/config";
+import { PaymentStatusChip } from "@features/pos/transactions/StatusChip";
 
 interface RecentTransaction {
   id: string;
@@ -37,17 +39,6 @@ function formatDateShort(date: Date | string) {
   return `${pad(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-const PAYMENT_LABELS: Record<string, string> = {
-  cash: "Tunai",
-  transfer: "Transfer",
-  qris: "QRIS",
-};
-
-const PAYMENT_COLORS: Record<string, string> = {
-  cash: "bg-green-100 text-green-700",
-  transfer: "bg-blue-100 text-blue-700",
-  qris: "bg-purple-100 text-purple-700",
-};
 
 export default function DashboardContent({ stats }: { stats: PosStats }) {
   return (
@@ -117,7 +108,7 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
         />
       </StatCardGrid>
 
-      <Card variant="secondary" className="border-none shadow-sm">
+      <Card className="overflow-hidden">
         <Card.Header>
           <div className="space-y-1">
             <Card.Title>Transaksi Terbaru</Card.Title>
@@ -128,48 +119,40 @@ export default function DashboardContent({ stats }: { stats: PosStats }) {
         </Card.Header>
         <Card.Content className="px-0 pb-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+            <table className="accent-table">
+              <thead>
                 <tr>
-                  <th className="text-left p-3 font-medium text-gray-500">No. Invoice</th>
-                  <th className="text-left p-3 font-medium text-gray-500">Pelanggan</th>
-                  <th className="text-right p-3 font-medium text-gray-500">Total</th>
-                  <th className="text-left p-3 font-medium text-gray-500">Pembayaran</th>
-                  <th className="text-left p-3 font-medium text-gray-500">Tanggal</th>
+                  <th className="pl-6">No. Invoice</th>
+                  <th>Pelanggan</th>
+                  <th className="text-right">Total</th>
+                  <th>Pembayaran</th>
+                  <th className="pr-6">Tanggal</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.recentTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-400">
+                    <td colSpan={5} className="py-8 text-center text-muted">
                       Belum ada transaksi
                     </td>
                   </tr>
                 ) : (
                   stats.recentTransactions.map((tx) => (
-                    <tr
-                      key={tx.id}
-                      className="border-t hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    >
-                      <td className="p-3 font-mono text-xs">{tx.invoiceNumber}</td>
-                      <td className="p-3">{tx.customerName}</td>
-                      <td className="p-3 text-right font-medium">{formatIDR(tx.total)}</td>
-                      <td className="p-3">
+                    <tr key={tx.id}>
+                      <td className="pl-6 font-mono text-xs font-medium">{tx.invoiceNumber}</td>
+                      <td>{tx.customerName}</td>
+                      <td className="text-right font-medium tabular-nums">{formatIDR(tx.total)}</td>
+                      <td>
+                        {/* Same as the Transaksi list: a chip only when it is still owed. */}
                         {tx.paymentStatus === "unpaid" || !tx.paymentMethod ? (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                            Belum Bayar
-                          </span>
+                          <PaymentStatusChip status="unpaid" size="sm" />
                         ) : (
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              PAYMENT_COLORS[tx.paymentMethod] ?? "bg-gray-100 text-gray-700"
-                            }`}
-                          >
+                          <span className="font-medium">
                             {PAYMENT_LABELS[tx.paymentMethod] ?? tx.paymentMethod}
                           </span>
                         )}
                       </td>
-                      <td className="p-3 text-gray-500 text-xs">
+                      <td className="pr-6 text-xs whitespace-nowrap text-muted">
                         {formatDateShort(tx.createdAt)}
                       </td>
                     </tr>

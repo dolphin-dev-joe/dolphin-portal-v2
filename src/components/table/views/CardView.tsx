@@ -10,6 +10,7 @@ import type { BaseRecord } from "@refinedev/core";
 import { ActionButton } from "../types";
 import type { ColumnTable, CustomRowActionButton } from "../types";
 import { AlertDialog } from "@/components/alert-dialog";
+import { ColumnTitle, HintTooltip } from "../TableTooltip";
 
 interface CardViewProps<T extends BaseRecord> {
   rows: T[];
@@ -89,7 +90,9 @@ export function CardView<T extends BaseRecord>({
                 <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3.5">
                   {otherColumns.map((column) => (
                     <div key={column.key} className="flex min-w-0 flex-col gap-0.5">
-                      <span className="text-xs text-accent/80">{column.title}</span>
+                      <span className="text-xs text-accent/80">
+                        <ColumnTitle title={column.title} tooltip={column.tooltip} />
+                      </span>
                       <span className="min-w-0 wrap-break-word text-sm font-medium text-foreground">
                         {getColumnValue(row, column)}
                       </span>
@@ -187,21 +190,24 @@ export function CardView<T extends BaseRecord>({
                         </Dropdown>
                       );
                     }
+                    const hint =
+                      typeof btn.tooltip === "function" ? btn.tooltip(row) : btn.tooltip;
                     return (
-                      <Button
-                        key={btn.key}
-                        variant={btn.variant ?? "outline"}
-                        isIconOnly={!btn.label}
-                        size="sm"
-                        isDisabled={disabled}
-                        aria-label={btn.ariaLabel ?? btn.label ?? btn.key}
-                        onPress={() => {
-                          void btn.onPress?.(row);
-                        }}
-                      >
-                        {btn.icon}
-                        {btn.label}
-                      </Button>
+                      <HintTooltip key={btn.key} content={hint}>
+                        <Button
+                          variant={btn.variant ?? "outline"}
+                          isIconOnly={!btn.label}
+                          size="sm"
+                          isDisabled={disabled}
+                          aria-label={btn.ariaLabel ?? btn.label ?? btn.key}
+                          onPress={() => {
+                            void btn.onPress?.(row);
+                          }}
+                        >
+                          {btn.icon}
+                          {btn.label}
+                        </Button>
+                      </HintTooltip>
                     );
                   })}
                 </div>

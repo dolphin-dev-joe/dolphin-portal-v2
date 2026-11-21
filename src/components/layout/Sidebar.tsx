@@ -16,6 +16,14 @@ import { useAppSwitcher } from "@/contexts/AppSwitcherContext";
 import { APPS, getAppConfig } from "@/config/apps";
 import { Link } from "react-router";
 import { usePathname } from "@hooks/usePathname";
+import {
+  BadgeDot,
+  CountBadge,
+  SidebarBadgesProvider,
+  useGroupBadge,
+  usePosSidebarBadges,
+  useSidebarBadge,
+} from "./sidebarBadges";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -55,6 +63,7 @@ function NavItem({
 }) {
   const { data } = useCan({ resource: item.name, action: "list" });
   const pathname = usePathname();
+  const badge = useSidebarBadge(item.name);
 
   const hasAccess = data?.can ?? false;
   if (!hasAccess) return null;
@@ -87,7 +96,13 @@ function NavItem({
           !isActive && "group-hover:scale-110",
         )}
       />
-      {!isCollapsed && <span className="truncate ">{label}</span>}
+      {!isCollapsed && <span className="flex-1 truncate">{label}</span>}
+      {badge &&
+        (isCollapsed ? (
+          <BadgeDot badge={badge} />
+        ) : (
+          <CountBadge badge={badge} />
+        ))}
     </Link>
   );
 
@@ -95,7 +110,10 @@ function NavItem({
     return (
       <Tooltip>
         <Tooltip.Trigger className="block w-full">{link}</Tooltip.Trigger>
-        <Tooltip.Content placement="right">{label}</Tooltip.Content>
+        <Tooltip.Content placement="right">
+          {label}
+          {badge ? ` (${badge.count})` : ""}
+        </Tooltip.Content>
       </Tooltip>
     );
   }
@@ -115,6 +133,7 @@ function CollapsedLeaf({
   pathname: string;
   closeSidebar: () => void;
 }) {
+  const badge = useSidebarBadge(child.name);
   return (
     <Dropdown.Item
       id={child.key}
@@ -145,6 +164,7 @@ function CollapsedLeaf({
       <Label className="flex-1 truncate cursor-pointer">
         {child.label || child.name}
       </Label>
+      {badge && <CountBadge badge={badge} />}
     </Dropdown.Item>
   );
 }
@@ -170,6 +190,9 @@ function NavGroup({
     isRouteActive(pathname, child.route),
   );
   const [isExpanded, setExpanded] = useState(isAnyChildActive);
+  const groupBadge = useGroupBadge(
+    collectLeafItems(item.children ?? []).map((leaf) => leaf.name),
+  );
 
   if (isCollapsed) {
     const children = item.children ?? [];
@@ -190,7 +213,7 @@ function NavGroup({
                   isIconOnly
                   variant="ghost"
                   className={cn(
-                    "mx-auto flex w-10 items-center justify-center rounded-xl py-2 outline-none transition-colors",
+                    "relative mx-auto flex w-10 items-center justify-center rounded-xl py-2 outline-none transition-colors",
                     isAnyChildActive
                       ? "bg-accent/15 text-accent ring-1 ring-inset ring-accent/15"
                       : "text-muted-foreground hover:bg-default-100/70 hover:text-foreground",
@@ -198,6 +221,7 @@ function NavGroup({
                   aria-label={label}
                 >
                   <Icon icon={iconName} className="h-5 w-5 shrink-0" />
+                  {groupBadge && <BadgeDot badge={groupBadge} />}
                 </Button>
               </Dropdown.Trigger>
             </Tooltip.Trigger>
@@ -257,6 +281,7 @@ function NavGroup({
         >
           <Icon icon={iconName} className="h-5 w-5 shrink-0" />
           <span className="flex-1 truncate text-left">{label}</span>
+          {groupBadge && !isExpanded && <CountBadge badge={groupBadge} />}
           <Disclosure.Indicator>
             <Icon
               icon="mdi:chevron-down"
@@ -336,6 +361,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   const activeConfig = getAppConfig(activeApp);
+  const badges = usePosSidebarBadges(activeApp === "pos");
 
   // Standalone Dashboard leaf — always visible, regardless of the active app.
   const dashboardItem = useMemo(
@@ -444,40 +470,42 @@ export function Sidebar() {
         </div>
 
         {/* Nav */}
-        <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-4">
-          <div className="flex flex-col gap-1">
-            {/* Dashboard — always available */}
-            {dashboardItem && (
+        <SidebarBadgesProvider value={badges}>
+          <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-4">
+            <div className="flex flex-col gap-1">
+              {/* Dashboard — always available */}
+              {dashboardItem && (
+                <MenuList
+                  items={[dashboardItem]}
+                  isCollapsed={isCollapsed}
+                  closeSidebar={closeSidebar}
+                />
+              )}
+
+              {/* Divider between dashboard and app menu */}
+              <div
+                className={cn(
+                  "my-1 flex",
+                  isCollapsed ? "justify-center" : "px-3",
+                )}
+              >
+                <span
+                  className={cn(
+                    "h-px bg-divider/60",
+                    isCollapsed ? "w-6" : "w-full",
+                  )}
+                />
+              </div>
+
+              {/* Active app menu */}
               <MenuList
-                items={[dashboardItem]}
+                items={appItems}
                 isCollapsed={isCollapsed}
                 closeSidebar={closeSidebar}
               />
-            )}
-
-            {/* Divider between dashboard and app menu */}
-            <div
-              className={cn(
-                "my-1 flex",
-                isCollapsed ? "justify-center" : "px-3",
-              )}
-            >
-              <span
-                className={cn(
-                  "h-px bg-divider/60",
-                  isCollapsed ? "w-6" : "w-full",
-                )}
-              />
             </div>
-
-            {/* Active app menu */}
-            <MenuList
-              items={appItems}
-              isCollapsed={isCollapsed}
-              closeSidebar={closeSidebar}
-            />
-          </div>
-        </nav>
+          </nav>
+        </SidebarBadgesProvider>
 
         {/* Sign out */}
         <div className="relative z-10 shrink-0 border-t border-divider/60 px-3 py-3">

@@ -43,6 +43,40 @@ export interface ColumnTable<T> {
     width?: number;
     render?: (item: T) => React.ReactNode;
     valueGetter?: (item: T) => React.ReactNode;
+    /** Explanation shown in an ⓘ tooltip next to the column title. */
+    tooltip?: React.ReactNode;
+    /**
+     * How this column goes into Excel / PDF. Without it the raw value at
+     * `key` is written as text. `false` leaves the column out.
+     */
+    export?: ColumnExport<T> | false;
+}
+
+/** Plain value written to an export cell; `null`/`undefined` → empty / "-". */
+export type ExportValue = string | number | Date | boolean | null | undefined;
+
+export interface ColumnExport<T> {
+    /** Header in the file; defaults to the column title. */
+    title?: string;
+    /** Plain value for the cell; defaults to the value at the column key. */
+    value?: (item: T) => ExportValue;
+    /**
+     * `currency` / `number` stay numbers in Excel (summable), `date` /
+     * `datetime` stay dates. Text otherwise.
+     */
+    format?: "text" | "number" | "currency" | "date" | "datetime";
+    /** Excel column width in characters. */
+    width?: number;
+}
+
+/** Enables the built-in Export menu (Excel / PDF) on a DataTable. */
+export interface DataTableExportOptions<T> {
+    /** File name without extension or date, e.g. "transaksi-pos". */
+    fileName: string;
+    /** Title printed on top of the PDF; defaults to the table label. */
+    title?: string;
+    /** Extra columns that only go into the file (e.g. phone, payment date). */
+    extraColumns?: (ColumnExport<T> & { key: string; title: string })[];
 }
 
 export interface CustomActionButton {
@@ -79,6 +113,8 @@ export interface CustomRowActionButton<T> {
     menuItems?: CustomRowActionMenuItem<T>[];
     isVisible?: (item: T) => boolean;
     isDisabled?: (item: T) => boolean;
+    /** Hint on hover, e.g. what the button does or why it is disabled. */
+    tooltip?: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
 export interface CustomFilterOption {

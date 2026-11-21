@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useList } from "@refinedev/core";
-import type { BaseRecord, CrudFilters } from "@refinedev/core";
+import type { BaseRecord, CrudFilters, CrudSort } from "@refinedev/core";
 
 interface UseDataTableDataOptions {
   resource: string;
@@ -16,6 +16,8 @@ interface UseDataTableDataOptions {
    * yang selalu `status = cancelled`.
    */
   permanentFilters?: { field: string; value: string | boolean }[];
+  /** Fixed sort order sent to the API (the endpoint default otherwise). */
+  sorters?: CrudSort[];
 }
 
 interface UseDataTableDataResult<T> {
@@ -27,6 +29,8 @@ interface UseDataTableDataResult<T> {
   setPage: (page: number) => void;
   isLoading: boolean;
   isError: boolean;
+  /** Filters currently sent to the API (search + custom + permanent). */
+  filters: CrudFilters;
 }
 
 /**
@@ -69,6 +73,7 @@ export function useDataTableData<T extends BaseRecord>({
   searchValue = "",
   filterValues = {},
   permanentFilters = [],
+  sorters,
 }: UseDataTableDataOptions): UseDataTableDataResult<T> {
   const [page, setPage] = useState(1);
 
@@ -92,6 +97,7 @@ export function useDataTableData<T extends BaseRecord>({
   } = useList<T>({
     resource,
     filters,
+    sorters,
     pagination: withPagination
       ? { currentPage: page, pageSize }
       : { mode: "off" },
@@ -114,5 +120,6 @@ export function useDataTableData<T extends BaseRecord>({
     setPage,
     isLoading,
     isError,
+    filters,
   };
 }

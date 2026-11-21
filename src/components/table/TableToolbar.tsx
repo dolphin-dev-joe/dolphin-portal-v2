@@ -39,6 +39,8 @@ interface TableToolbarProps<T extends BaseRecord> {
   handleCreate: () => void;
   handleExport: () => Promise<void>;
   handleImport: () => Promise<void>;
+  /** Built-in Excel / PDF export menu, shown next to the filters. */
+  exportMenu?: React.ReactNode;
 }
 
 export function TableToolbar<T extends BaseRecord>({
@@ -56,6 +58,7 @@ export function TableToolbar<T extends BaseRecord>({
   handleCreate,
   handleExport,
   handleImport,
+  exportMenu,
 }: TableToolbarProps<T>) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [inputValue, setInputValue] = useState(searchValue);
@@ -191,6 +194,8 @@ export function TableToolbar<T extends BaseRecord>({
                 )}
               </Button>
             )}
+
+            {exportMenu}
 
             {/* Export/Import Buttons */}
             {!isCardMode ? (
