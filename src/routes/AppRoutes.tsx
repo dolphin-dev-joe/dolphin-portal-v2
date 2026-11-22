@@ -89,6 +89,11 @@ const CRUD: CrudPages[] = [
     edit: page(() => import("@pages/users/edit")),
     show: page(() => import("@pages/users/show")),
   },
+  // POS approval requests: admins approve or reject (bell in the header).
+  {
+    path: "/approvals",
+    list: page(() => import("@pages/approvals/list")),
+  },
 
   // ── POS Management ────────────────────────────────────────────────────────
   {
