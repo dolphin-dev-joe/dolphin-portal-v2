@@ -5,6 +5,7 @@ import { HeaderUserProfile } from "./HeaderUserProfile";
 import { useSidebar } from "@contexts/SidebarContext";
 import { useAppSwitcher } from "@contexts/AppSwitcherContext";
 import { getAppConfig } from "@/config/apps";
+import { ApprovalBell } from "@features/portal/approvals/ApprovalBell";
 
 export function Header() {
   const [isDark, setIsDark] = useState(false);
@@ -74,6 +75,9 @@ export function Header() {
 
         {/* Divider */}
         <span className="mx-1 hidden h-7 w-px bg-divider/60 sm:block" />
+
+        {/* POS approval requests (admins only) */}
+        <ApprovalBell />
 
         {/* Theme toggle */}
         <Tooltip>

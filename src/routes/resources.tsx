@@ -148,6 +148,17 @@ export const resources = [
       icon: "mdi:account-multiple",
     },
   },
+  {
+    // POS cashiers asking for admin-only actions (DLM-14). Also reachable
+    // from the bell in the header, whatever app is open.
+    name: "approvals",
+    list: "/approvals",
+    meta: {
+      label: "Persetujuan POS",
+      parent: "portal-management",
+      icon: "mdi:shield-check-outline",
+    },
+  },
 
   // ── Parent: POS Management ──────────────────────────────────────────────
 
