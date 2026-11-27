@@ -13,8 +13,17 @@ import {
   type IApproval,
 } from "./interfaces";
 
-/** A cashier is waiting at the tablet, so check often. */
-const POLL_MS = 5_000;
+/**
+ * Poll cadence. Every open portal tab runs this, so it stays slow: 30 s while
+ * the tab is visible (a cashier is waiting at the tablet), 2 min in the
+ * background (still enough for the browser notification). Returning to the
+ * tab refetches at once (`refetchOnWindowFocus`).
+ */
+const POLL_VISIBLE_MS = 30_000;
+const POLL_HIDDEN_MS = 120_000;
+
+const pollInterval = () =>
+  typeof document !== "undefined" && document.hidden ? POLL_HIDDEN_MS : POLL_VISIBLE_MS;
 export const APPROVALS_PATH = "/approvals";
 
 function canUseBrowserNotifications(): boolean {
@@ -39,7 +48,7 @@ export function ApprovalBell() {
     errorNotification: false,
     queryOptions: {
       enabled: canApprove,
-      refetchInterval: POLL_MS,
+      refetchInterval: pollInterval,
       refetchIntervalInBackground: true,
       refetchOnWindowFocus: true,
     },
