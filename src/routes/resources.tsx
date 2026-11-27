@@ -7,6 +7,17 @@ export const resources = [
       icon: "mdi:view-dashboard",
     },
   },
+  {
+    // POS cashiers asking for admin-only actions (DLM-14), opened from the
+    // header bell. Global like Dashboard (no parent), so opening it never
+    // switches the active app.
+    name: "approvals",
+    list: "/approvals",
+    meta: {
+      label: "Persetujuan POS",
+      icon: "mdi:shield-check-outline",
+    },
+  },
 
   // ── Parent: Landing Page Content (no list route — group only) ──────────────
   {
@@ -146,17 +157,6 @@ export const resources = [
       label: "Users",
       parent: "portal-management",
       icon: "mdi:account-multiple",
-    },
-  },
-  {
-    // POS cashiers asking for admin-only actions (DLM-14). Also reachable
-    // from the bell in the header, whatever app is open.
-    name: "approvals",
-    list: "/approvals",
-    meta: {
-      label: "Persetujuan POS",
-      parent: "portal-management",
-      icon: "mdi:shield-check-outline",
     },
   },
 

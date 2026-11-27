@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useCan, useLogout, useMenu } from "@refinedev/core";
+import { useCan, useGetIdentity, useLogout, useMenu } from "@refinedev/core";
+import type { AuthUser } from "@lib/authStorage";
+import { APPROVALS_RESOURCE, APPROVER_ROLES } from "@features/portal/approvals/interfaces";
+
+/** Top-level resources shown above the active app's menu, in every app. */
+const GLOBAL_RESOURCES = ["dashboard", APPROVALS_RESOURCE];
 import {
   Button,
   cn,
@@ -363,10 +368,17 @@ export function Sidebar() {
   const activeConfig = getAppConfig(activeApp);
   const badges = usePosSidebarBadges(activeApp === "pos");
 
-  // Standalone Dashboard leaf — always visible, regardless of the active app.
-  const dashboardItem = useMemo(
-    () => menuItems.find((item) => item.name === "dashboard"),
-    [menuItems],
+  const { data: identity } = useGetIdentity<AuthUser>();
+  const canApprove = APPROVER_ROLES.includes(identity?.role ?? "");
+
+  // Global leaves (no parent): visible in every app, and opening them never
+  // switches the active app. Approvals only for roles that can approve.
+  const globalItems = useMemo(
+    () =>
+      GLOBAL_RESOURCES.filter((name) => name !== APPROVALS_RESOURCE || canApprove)
+        .map((name) => menuItems.find((item) => item.name === name))
+        .filter((item) => item !== undefined),
+    [menuItems, canApprove],
   );
 
   // The active app's own menu = the children of its root resource group.
@@ -473,10 +485,10 @@ export function Sidebar() {
         <SidebarBadgesProvider value={badges}>
           <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-4">
             <div className="flex flex-col gap-1">
-              {/* Dashboard — always available */}
-              {dashboardItem && (
+              {/* Dashboard + approvals — available in every app */}
+              {globalItems.length > 0 && (
                 <MenuList
-                  items={[dashboardItem]}
+                  items={globalItems}
                   isCollapsed={isCollapsed}
                   closeSidebar={closeSidebar}
                 />
