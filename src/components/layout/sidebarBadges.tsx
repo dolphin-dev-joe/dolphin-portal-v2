@@ -34,7 +34,7 @@ export function useGroupBadge(leafNames: string[]): SidebarBadge | undefined {
 }
 
 /**
- * Work waiting in the POS. Only polled while the POS app is open in the
+ * Work waiting in the POS. Only fetched while the POS app is open in the
  * sidebar; a zero count shows no badge.
  */
 export function usePosSidebarBadges(enabled: boolean): SidebarBadges {

@@ -6,11 +6,14 @@ import { AppSwitcherProvider } from "@/contexts/AppSwitcherContext";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { usePosTransactionsLive } from "@hooks/usePosTransactionsLive";
 
 // Auth is enforced by <Authenticated> around this layout in App.tsx,
 // and /login is rendered outside of it.
 function LayoutInner({ children }: PropsWithChildren) {
   const { isCollapsed } = useSidebar();
+  // POS order lists and badges refresh on Realtime signals, never by polling.
+  usePosTransactionsLive();
 
   return (
     <div className="flex h-screen overflow-hidden bg-default-50">

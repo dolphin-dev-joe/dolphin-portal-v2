@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 
 import { CountBadge } from "@components/layout/sidebarBadges";
 import type { AuthUser } from "@lib/authStorage";
+import { useBroadcastSignal } from "@lib/realtime";
 import {
   APPROVALS_RESOURCE,
   APPROVER_ROLES,
@@ -13,18 +14,11 @@ import {
   type IApproval,
 } from "./interfaces";
 
-/**
- * Poll cadence. Every open portal tab runs this, so it stays slow: 30 s while
- * the tab is visible (a cashier is waiting at the tablet), 2 min in the
- * background (still enough for the browser notification). Returning to the
- * tab refetches at once (`refetchOnWindowFocus`).
- */
-const POLL_VISIBLE_MS = 30_000;
-const POLL_HIDDEN_MS = 120_000;
-
-const pollInterval = () =>
-  typeof document !== "undefined" && document.hidden ? POLL_HIDDEN_MS : POLL_VISIBLE_MS;
 export const APPROVALS_PATH = "/approvals";
+
+/** Realtime signal sent by dolphin-api (identity.ApprovalsTopic/Event). */
+const APPROVALS_TOPIC = "portal-approvals";
+const APPROVALS_EVENT = "approvals_changed";
 
 function canUseBrowserNotifications(): boolean {
   return typeof window !== "undefined" && "Notification" in window;
@@ -35,6 +29,11 @@ function canUseBrowserNotifications(): boolean {
  * toast when a new one arrives, and a browser notification when the portal
  * tab is in the background (if the admin allowed it). Renders nothing for
  * roles that can't approve.
+ *
+ * No polling: the API broadcasts a Realtime signal whenever a request is
+ * created, cancelled or decided, and the bell (plus the approvals page)
+ * refetches then. It also refetches when the tab regains focus, after a
+ * reconnect, and once when the oldest waiting request expires.
  */
 export function ApprovalBell() {
   const { data: identity } = useGetIdentity<AuthUser>();
@@ -48,8 +47,6 @@ export function ApprovalBell() {
     errorNotification: false,
     queryOptions: {
       enabled: canApprove,
-      refetchInterval: pollInterval,
-      refetchIntervalInBackground: true,
       refetchOnWindowFocus: true,
     },
   });
@@ -59,9 +56,25 @@ export function ApprovalBell() {
   const navigate = useNavigate();
   const seen = useRef<Set<string> | null>(null);
 
+  // Refreshes this bell and the approvals page (every approvals list).
+  const refresh = () => invalidate({ resource: APPROVALS_RESOURCE, invalidates: ["list"] });
+  useBroadcastSignal(APPROVALS_TOPIC, APPROVALS_EVENT, refresh, canApprove);
+
   const pending = result?.data ?? [];
   const count = result?.total ?? 0;
   const idsKey = pending.map((a) => a.id).join(",");
+
+  // An expiring request sends no signal: refetch once when the oldest is due.
+  const nextExpiry = pending.reduce<number | null>((min, a) => {
+    const t = Date.parse(a.expiresAt);
+    return Number.isNaN(t) ? min : min === null ? t : Math.min(min, t);
+  }, null);
+  useEffect(() => {
+    if (nextExpiry === null) return;
+    const timer = window.setTimeout(refresh, Math.max(nextExpiry - Date.now(), 0) + 1_000);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextExpiry]);
 
   useEffect(() => {
     if (!canApprove || !result) return;
@@ -84,10 +97,6 @@ export function ApprovalBell() {
           tag: `approval-${a.id}`,
         });
       }
-    }
-    // Keep the approvals page in step when the waiting list changes.
-    if (previous && (fresh.length > 0 || previous.size !== ids.size)) {
-      invalidate({ resource: APPROVALS_RESOURCE, invalidates: ["list"] });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canApprove, idsKey]);
